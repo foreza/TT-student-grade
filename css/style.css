@@ -7,6 +7,15 @@
 }
 
 
+/* Dark Mode Styles */
+
+.darkMode {
+    border: #ffffff;    /* Set all borders to white */
+    color: #ffffff;     /* Set all font color to white */
+    background-color: #000000; /* Set the background color to black */
+}
+
+
 /* Header content styles */
 
 #header-setting {
@@ -18,7 +27,7 @@
 
 #darkModeToggle {
     margin: 0 auto;
-    border: 1px solid black;
+    border: 1px solid #000000;
     display: block;
     font-size: 1.5em;
     height: 1.2em;
@@ -44,14 +53,14 @@ h1 {
     margin: 0 auto;
     font-family: 'Courier New', Courier, monospace;
     font-size: 2em;
-    border: 2px solid black;
+    border: 2px solid #000000;                        /* Color set default to black */
     min-width: 300px;
 }
 
 #table-grades th {
     padding-left: 1em;
     padding-right: 1em;
-    border: 1px solid black;
+    border: 1px solid;
     font-size: 1.2em;
 }
 
@@ -65,7 +74,7 @@ h1 {
 }
 
 #table-grades td {
-    border: 1px solid black;
+    border: 1px solid;
 }
 
 /* Footer styles */
