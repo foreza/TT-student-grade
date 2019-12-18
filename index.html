@@ -12,25 +12,36 @@
   <script>
 
     let isDarkMode = false;         // T = dark mode, F = light mode.
-  
-    function toggleDarkMode(){
-        // TODO: implement
+
+    function toggleDarkMode() {
+
+      if (!isDarkMode) {
+        document.getElementById("body-content")
+          .classList.add('darkMode');
+        isDarkMode = true;
+      } else {
+        document.getElementById("body-content")
+          .classList.remove('darkMode');
+        isDarkMode = false;
+      }
+
     }
 
-  
+
   </script>
 
 
 </head>
 
-<body>
+<body id="body-content">
 
 
   <header>
 
-    <!-- TODO: Implement a toggle between Light/Dark Mode  --> 
+    <!-- TODO: Implement a toggle between Light/Dark Mode  -->
     <div id="header-setting">
-        <input onclick="toggleDarkMode()" type="button" id="darkModeToggle" name="enableDarkMode" value="View in Dark Mode">
+      <input onclick="toggleDarkMode()" type="button" id="darkModeToggle" name="enableDarkMode"
+        value="View in Dark Mode">
     </div>
 
   </header>
@@ -65,9 +76,9 @@
         <td>A+</td>
       </tr>
       <tr>
-          <td>T</td>
-          <td>A++</td>
-        </tr>
+        <td>T</td>
+        <td>A++</td>
+      </tr>
 
     </table>
 
