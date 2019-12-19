@@ -44,6 +44,7 @@
 /* Main content styles */
 
 h1 {
+    font-family: 'Courier New', Courier, monospace;
     text-align: center;
     font-size: 3em;
 }
@@ -68,6 +69,18 @@ h1 {
 #table-grades tr {
     text-align: center;
 }
+
+#table-grades tr td input[type="text"] {
+    font: unset;
+    text-align: center;
+}
+
+#table-grades tr td input[type="button"] {
+    width: 50%;
+    font-size: 2em;
+}
+
+
 
 #table-grades tr:hover{
     background-color: #cccccc;
