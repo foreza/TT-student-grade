@@ -13,6 +13,7 @@
     border: #ffffff;    /* Set all borders to white */
     color: #ffffff;     /* Set all font color to white */
     background-color: #000000; /* Set the background color to black */
+    background: #000000; /* Set the background color to black */
 }
 
 
@@ -81,7 +82,6 @@ h1 {
 }
 
 
-
 #table-grades tr:hover{
     background-color: #cccccc;
 }
@@ -89,5 +89,53 @@ h1 {
 #table-grades td {
     border: 1px solid;
 }
+
+
+
+#table-grades .on-hover-show{
+    position: relative;
+    display: block;
+    min-width: 3em;
+}
+
+#table-grades .on-hover-show button{
+    height: max-content;
+    font-size: inherit;
+    width: 3em;
+}
+
+/* Dropdown content should be absent from display */
+#table-grades .dropdown-content{
+    display: none;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+
+}
+
+/* Make button invisible on hover */
+#table-grades .on-hover-show:hover button{
+    visibility: hidden;
+}
+
+/* Show the dropdown-content on hover */ 
+#table-grades .on-hover-show:hover .dropdown-content{
+    display: block;
+}
+
+
+#table-grades .dropdown-content a {
+    height: 1rem;
+    display: block;
+    font-size: 1rem;    
+    border: 1px dashed;
+}
+
+#table-grades .dropdown-content a:hover {
+    font-weight: 900;
+    background-color: #777777;
+}
+
 
 /* Footer styles */
