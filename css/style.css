@@ -99,9 +99,8 @@ h1 {
 }
 
 #table-grades .on-hover-show button{
-    height: max-content;
-    font-size: inherit;
-    width: 3em;
+    font-size: 1rem;
+    width: 2rem;
 }
 
 /* Dropdown content should be absent from display */
