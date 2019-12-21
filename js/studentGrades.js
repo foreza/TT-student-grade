@@ -12,6 +12,15 @@ const tbody = document.querySelector('#table-grades tbody');
 
 renderStudentGradeTable(students);
 
+// TODO: Implement edit function
+function editRowWithStudentID(id){
+    alert(`Editing: ${id}`);
+}
+
+function deleteRowWithStudentID(id){
+    alert(`Deleting: ${id}`);
+}
+
 
 // Function to render grades given a 
 function renderStudentGradeTable(studentGradeList) {
@@ -24,10 +33,43 @@ function renderStudentGradeTable(studentGradeList) {
         const colGrade = document.createElement('td');
         const colOptions = document.createElement('td');
 
+
         colName.textContent = student.name;
         colGrade.textContent = student.grade;
 
-        row.setAttribute('studentID', student.id);
+        const onHoverShow = document.createElement('div');
+        onHoverShow.setAttribute('class', 'on-hover-show');
+        
+        const dropDownButton = document.createElement('button');
+        dropDownButton.textContent = "...";
+
+        const dropDownContent = document.createElement('div');
+        dropDownContent.setAttribute('class', 'dropdown-content');
+
+        const editLink = document.createElement('a');
+        const deleteLink = document.createElement('a');
+
+        editLink.setAttribute('href', "#");
+        deleteLink.setAttribute('href', "#");
+
+        // TODO: Fix this up later
+        editLink.setAttribute('onclick', `editRowWithStudentID(${student.id})`);
+        deleteLink.setAttribute('onclick', `deleteRowWithStudentID(${student.id})`);
+
+        editLink.textContent = 'Edit';
+        deleteLink.textContent = 'Delete';
+
+        dropDownContent.appendChild(editLink);
+        dropDownContent.appendChild(deleteLink);
+
+        
+        onHoverShow.appendChild(dropDownButton);
+        onHoverShow.appendChild(dropDownContent);
+
+        colOptions.appendChild(onHoverShow);
+
+
+        row.setAttribute('id', student.id);
         row.appendChild(colName);
         row.appendChild(colGrade);
         row.appendChild(colOptions);
