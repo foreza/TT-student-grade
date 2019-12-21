@@ -17,6 +17,14 @@
 }
 
 
+.darkMode #table-grades tr td input[type="text"]{
+    background: #000000;
+    color: #ffffff;     /* Set all font color to white */
+
+}
+
+
+
 /* Header content styles */
 
 #header-setting {
