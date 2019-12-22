@@ -14,6 +14,8 @@ const tbody = document.querySelector('#table-grades tbody');
 const tFooterNameInput = document.querySelector('#input-name');
 const tFooterGradeInput = document.querySelector('#input-grade');
 
+const uniqueIDPrefix = "student-";
+
 renderStudentGradeTable(students);
 
 
@@ -64,6 +66,25 @@ function editRowWithStudentID(id){
 
 function deleteRowWithStudentID(id){
     alert(`Deleting: ${id}`);
+
+    // For removing from the data structure, we'll do brute force approach for now
+
+    for (var i = 0; i <students.length; ++i){
+
+        // Loop until we find a matching ID
+        if (id == students[i].id){
+
+            students.splice(i, 1);
+            alert('Found id for deletion')
+
+            break;
+        }
+
+    }
+
+    // Remove from the view as well 
+    document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
+
 }
 
 
@@ -111,7 +132,7 @@ function returnCreatedRowItemForStudent(student){
     colOptions.appendChild(onHoverShow);
 
 
-    row.setAttribute('id', student.id);
+    row.setAttribute('id', `${uniqueIDPrefix}${student.id}`);   // Use a configurable prefix
     row.appendChild(colName);
     row.appendChild(colGrade);
     row.appendChild(colOptions);
