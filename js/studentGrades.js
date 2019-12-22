@@ -42,19 +42,23 @@ function addNewStudentToArray(studentObj){
 function attemptAddNewRow(){
 
 // TODO: Do some form validation here as well
+    if (isValidInputForForm()){
+        let newStudent = {
+            id: students.length,    // TODO: How are we assigning IDs?
+            name: tFooterNameInput.value,
+            grade: tFooterGradeInput.value
+        }
+    
+        addNewStudentToArray(newStudent);
+    
+        // Clear input after
+    
+        tFooterNameInput.value = "";
+        tFooterGradeInput.value = "";
+    } else 
+    alert ('Unable to add new row; check to make sure the form is filled out.');
 
-    let newStudent = {
-        id: students.length,    // TODO: How are we assigning IDs?
-        name: tFooterNameInput.value,
-        grade: tFooterGradeInput.value
-    }
-
-    addNewStudentToArray(newStudent);
-
-    // Clear input after
-
-    tFooterNameInput.value = "";
-    tFooterGradeInput.value = "";
+   
 
 }
 
@@ -148,5 +152,45 @@ function renderStudentGradeTable(studentGradeList) {
     studentGradeList.forEach(student => {
         tbody.appendChild(returnCreatedRowItemForStudent(student));
         });
+
+}
+
+
+function isValidInputForForm(){
+
+    // Check name input
+    if (validateNameInput() && validateGradeInput()){
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+// Name validation
+function validateNameInput(){
+    
+    // Check to ensure the value is not empty
+    if (tFooterNameInput.value != "") {
+        tFooterNameInput.removeAttribute('class', 'error');
+        return true;
+    } else {
+        tFooterNameInput.setAttribute('class', 'error');
+        return false;   
+    }
+
+}
+
+// Grade validation
+function validateGradeInput(){
+
+    // TODO: Alert due to specific error?
+    if (tFooterGradeInput.value != "" && tFooterGradeInput.value >= 0 && tFooterGradeInput.value <= 100){
+        tFooterGradeInput.removeAttribute('class', 'error');
+        return true; 
+    } else {
+        tFooterGradeInput.setAttribute('class', 'error');
+        return false;
+    }
 
 }

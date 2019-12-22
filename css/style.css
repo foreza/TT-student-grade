@@ -17,12 +17,17 @@
 }
 
 
-.darkMode #table-grades tr td input[type="text"]{
+.darkMode #table-grades tr td input[type="text"], .darkMode #table-grades tr td input[type="number"]{
     background: #000000;
     color: #ffffff;     /* Set all font color to white */
 
 }
 
+/* Error Input Styles */
+
+#table-grades tr td input[type="text"].error , #table-grades tr td input[type="number"].error  {
+    border: 2px solid red;
+}
 
 
 /* Header content styles */
@@ -79,10 +84,11 @@ h1 {
     text-align: center;
 }
 
-#table-grades tr td input[type="text"] {
+#table-grades tr td input[type="text"], #table-grades tr td input[type="number"] {
     font: unset;
     text-align: center;
 }
+
 
 #table-grades tr td input[type="button"] {
     width: 50%;
