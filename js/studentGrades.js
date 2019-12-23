@@ -16,6 +16,7 @@ const tFooterGradeInput = document.querySelector('#input-grade');
 
 const uniqueIDPrefix = "student-";
 
+
 renderStudentGradeTable(students);
 
 
@@ -64,9 +65,53 @@ function attemptAddNewRow(){
 
 
 // TODO: Implement edit function
-function editRowWithStudentID(id){
-    alert(`Editing: ${id}`);
+function editActionWithStudentID(id){
+    alert(`Begin editing: ${id}`);
+
+    // Update the view to use inputs.
+    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
+    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
+    enableEditingForStudentID(id);
+
+
 }
+
+// This should only be fire
+function updateRowWithStudentID(id){
+        alert(`Updating: ${id}`);
+
+        disableEditingForStudentID(id);
+
+}
+
+function cancelActionWithStudentID(id){
+    alert(`Canceling Action for: ${id}`);
+
+    disableEditingForStudentID(id);
+
+
+    
+}
+
+function enableEditingForStudentID(id){
+    const optionsColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[2];
+    // Hide the options button
+    optionsColItem.children[0].children[0].setAttribute('class','edit-content-hidden');
+    // Show the edit links
+    optionsColItem.children[1].children[0].setAttribute('class','is-editable');
+}
+
+function disableEditingForStudentID(id){
+    const optionsColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[2];
+
+    // Hide the edit links
+    optionsColItem.children[1].children[0].removeAttribute('class','is-editable');
+    optionsColItem.children[1].children[0].setAttribute('class','edit-content-hidden');
+
+    // Show the options button
+    optionsColItem.children[0].children[0].removeAttribute('class','is-editable');
+}
+
 
 function deleteRowWithStudentID(id){
     alert(`Deleting: ${id}`);
@@ -78,7 +123,7 @@ function deleteRowWithStudentID(id){
         // Loop until we find a matching ID
         if (id == students[i].id){
 
-            students.splice(i, 1);
+            students.splice(i, 1);  
             alert('Found id for deletion')
 
             break;
@@ -86,7 +131,7 @@ function deleteRowWithStudentID(id){
 
     }
 
-    // Remove from the view as well 
+    // Remove from the view as well TODO: Separate DOM manipulation from modifying the data model.
     document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
 
 }
@@ -104,6 +149,7 @@ function returnCreatedRowItemForStudent(student){
     colName.textContent = student.name;
     colGrade.textContent = student.grade;
 
+    // On Hover show button and links
     const onHoverShow = document.createElement('div');
     onHoverShow.setAttribute('class', 'on-hover-show');
     
@@ -118,9 +164,7 @@ function returnCreatedRowItemForStudent(student){
 
     editLink.setAttribute('href', "#");
     deleteLink.setAttribute('href', "#");
-
-    // TODO: Fix this up later
-    editLink.setAttribute('onclick', `editRowWithStudentID(${student.id})`);
+    editLink.setAttribute('onclick', `editActionWithStudentID(${student.id})`);
     deleteLink.setAttribute('onclick', `deleteRowWithStudentID(${student.id})`);
 
     editLink.textContent = 'Edit';
@@ -129,12 +173,37 @@ function returnCreatedRowItemForStudent(student){
     dropDownContent.appendChild(editLink);
     dropDownContent.appendChild(deleteLink);
 
-    
     onHoverShow.appendChild(dropDownButton);
     onHoverShow.appendChild(dropDownContent);
 
-    colOptions.appendChild(onHoverShow);
+    // On edit show content and links
+    const onEditShow = document.createElement('div');
+    onEditShow.setAttribute('class', 'on-edit-show');
 
+    const editContentLinks = document.createElement('div');
+    editContentLinks.setAttribute('class', 'edit-content-hidden');
+
+    const saveLink = document.createElement('a');
+    const cancelLink = document.createElement('a');
+
+
+    saveLink.setAttribute('href', "#");
+    cancelLink.setAttribute('href', "#");
+    saveLink.setAttribute('onclick', `updateRowWithStudentID(${student.id})`);
+    cancelLink.setAttribute('onclick', `cancelActionWithStudentID(${student.id})`);
+
+    saveLink.textContent = 'Save';
+    cancelLink.textContent = 'Cancel';
+    
+
+    editContentLinks.appendChild(saveLink);
+    editContentLinks.appendChild(cancelLink);
+
+    onEditShow.appendChild(editContentLinks);
+
+    
+    colOptions.appendChild(onHoverShow);
+    colOptions.appendChild(onEditShow);
 
     row.setAttribute('id', `${uniqueIDPrefix}${student.id}`);   // Use a configurable prefix
     row.appendChild(colName);

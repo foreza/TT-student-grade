@@ -138,15 +138,25 @@ h1 {
     display: block;
 }
 
+/* By default, the edit section should not be displayed */
+#table-grades .edit-content-hidden{
+    display: none;
+}
 
-#table-grades .dropdown-content a {
+/* When the editable class is added, show the element */
+#table-grades .is-editable{
+    display: block;
+}
+
+
+#table-grades .dropdown-content a, #table-grades .is-editable a {
     height: 1rem;
     display: block;
     font-size: 1rem;    
     border: 1px dashed;
 }
 
-#table-grades .dropdown-content a:hover {
+#table-grades .dropdown-content a:hover, #table-grades .is-editable a:hover {
     font-weight: 900;
     background-color: #777777;
 }
