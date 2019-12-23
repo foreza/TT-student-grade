@@ -7,6 +7,7 @@ const students = [
     {id: 3, name: 'Fa', grade: 88},
     ];
 
+    
 // Maintain reference to the tBody 
 const tbody = document.querySelector('#table-grades tbody');
 
@@ -68,32 +69,105 @@ function attemptAddNewRow(){
 function editActionWithStudentID(id){
     alert(`Begin editing: ${id}`);
 
-    // Update the view to use inputs.
-    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
-    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
-    enableEditingForStudentID(id);
+    enableEditingNameViewForStudentID(id);
+    enableEditingGradeViewForStudentID(id);
+    enableEditingOptionViewForStudentID(id);
 
 
 }
 
-// This should only be fire
 function updateRowWithStudentID(id){
         alert(`Updating: ${id}`);
 
-        disableEditingForStudentID(id);
+        disableEditingNameViewForStudentID(id);
+        disableEditingGradeViewForStudentID(id);
+        disableEditingOptionViewForStudentID(id);
 
 }
 
 function cancelActionWithStudentID(id){
     alert(`Canceling Action for: ${id}`);
 
-    disableEditingForStudentID(id);
+    disableEditingNameViewForStudentID(id);
+    disableEditingGradeViewForStudentID(id);
+    disableEditingOptionViewForStudentID(id);
 
 
     
 }
 
-function enableEditingForStudentID(id){
+
+// Editing view functions
+
+function enableEditingNameViewForStudentID(id){
+
+        const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
+
+        // Hide the existing value
+        const nameColItemVal = nameColItem.children[0];
+        nameColItemVal.setAttribute('class', 'edit-content-hidden');
+
+        // Create an input with the existing value as placeholder
+        const inputForName = document.createElement('input')
+        inputForName.setAttribute('type', "text");
+        inputForName.setAttribute('placeholder', nameColItemVal.innerHTML);
+        nameColItem.appendChild(inputForName);
+
+
+        
+
+}
+
+function enableEditingGradeViewForStudentID(id){
+
+    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
+
+      // Hide the existing value
+      const gradeColItemVal = gradeColItem.children[0];
+      gradeColItemVal.setAttribute('class', 'edit-content-hidden');
+
+      // Create an input with the existing value as placeholder
+      const inputForGrade = document.createElement('input')
+      inputForGrade.setAttribute('type', "number");
+      inputForGrade.setAttribute('min', 0);
+      inputForGrade.setAttribute('max', 100);
+      inputForGrade.setAttribute('value', gradeColItemVal.innerHTML);
+      gradeColItem.appendChild(inputForGrade);
+
+
+
+}
+
+function disableEditingNameViewForStudentID(id){
+
+    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
+
+       // Show the value
+       const nameColItemVal = nameColItem.children[0];
+       nameColItemVal.removeAttribute('class', 'edit-content-hidden');
+
+       // Access and destroy the input
+       const nameColItemInput = nameColItem.children[1];
+       nameColItemInput.remove();
+
+
+}
+
+function disableEditingGradeViewForStudentID(id){
+
+    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
+
+    // Show the value
+    const gradeColItemVal = gradeColItem.children[0];
+    gradeColItemVal.removeAttribute('class', 'edit-content-hidden');
+
+    // Access and destroy the input
+    const gradeColItemInput = gradeColItem.children[1];
+    gradeColItemInput.remove();
+
+}
+
+function enableEditingOptionViewForStudentID(id){
     const optionsColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[2];
     // Hide the options button
     optionsColItem.children[0].children[0].setAttribute('class','edit-content-hidden');
@@ -101,7 +175,7 @@ function enableEditingForStudentID(id){
     optionsColItem.children[1].children[0].setAttribute('class','is-editable');
 }
 
-function disableEditingForStudentID(id){
+function disableEditingOptionViewForStudentID(id){
     const optionsColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[2];
 
     // Hide the edit links
@@ -146,8 +220,14 @@ function returnCreatedRowItemForStudent(student){
     const colGrade = document.createElement('td');
     const colOptions = document.createElement('td');
 
-    colName.textContent = student.name;
-    colGrade.textContent = student.grade;
+
+    const colNameContent = document.createElement('span');
+    colNameContent.textContent = student.name;  
+    colName.appendChild(colNameContent);       
+
+    const colGradeContent = document.createElement('span');
+    colGradeContent.textContent = student.grade;  
+    colGrade.appendChild(colGradeContent);   
 
     // On Hover show button and links
     const onHoverShow = document.createElement('div');
