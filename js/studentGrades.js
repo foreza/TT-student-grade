@@ -4,7 +4,12 @@ const students = [
     {id: 0, name: 'Do', grade: 24},
     {id: 1, name: 'Rey', grade: 23},
     {id: 2, name: 'Mee', grade: 99},
-    {id: 3, name: 'Fa', grade: 88},
+    {id: 3, name: 'AAA chan', grade: 88},
+    {id: 4, name: 'aaa chen ', grade: 22},
+    {id: 5, name: 'zzz', grade: 33},
+    {id: 6, name: 'zed ke', grade: 44},
+    {id: 7, name: 'zed kea', grade: 44},
+    {id: 8, name: 'armin buu', grade: 44}
     ];
 
 // ID uniqueifier
@@ -397,5 +402,50 @@ function validateGradeInput(element){
         element.setAttribute('class', 'error');
         return false;
     }
+
+}
+
+function sortStudentCollectionByNameDescending(){
+
+    // Sort the data
+    students.sort(compareStudentNameDesc);
+
+    // TODO: Toggle the view carat
+
+    console.log(students);
+
+}
+
+
+function sortCollectionAscending(){
+
+    // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
+    students.sort(compareStudentNameDesc).reverse();
+    console.log(students);
+
+}
+
+function compareStudentNameDesc(a, b){
+
+    // Convert to the same case
+    const nameA = a.name.toUpperCase();
+    const nameB = b.name.toUpperCase();
+
+    // Only need to iterate as long as the shorter string
+    const shortestLen = nameA.length < nameB.length ? nameA.length : nameB.length;  
+
+    for (var i = 0; i < shortestLen; ++i){
+        
+        // Check if one of them is bigger or not
+        if (nameA.charCodeAt(i) > nameB.charCodeAt(i)){
+            return 1;
+        } else if (nameA.charCodeAt(i) < nameB.charCodeAt(i)){
+            return - 1;
+        } 
+
+        // continue loop if the characters at same position are the same
+
+    }
+
 
 }
