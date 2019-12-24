@@ -14,6 +14,8 @@ const students = [
 
 // ID uniqueifier
 let startingID = students.length; // Set this to the input length for now and increment this
+
+let sortNameState = 0;          // Keep track of the current sort view state
     
 // Maintain reference to the tBody 
 const tbody = document.querySelector('#table-grades tbody');
@@ -411,6 +413,20 @@ function clearViewTable(){
     // While loop to delete (TODO: find a better way)
     while (tbody.children.length > 0) {
         tbody.lastChild.remove();
+    }
+
+}
+
+
+function changeSortViewStateAndSort(){
+
+    if (sortNameState === 0) {
+        sortStudentCollectionByNameDescending();
+        sortNameState = 1;
+        return;
+    } if (sortNameState === 1) {
+        sortStudentCollectionByNameAscending();
+        sortNameState = 0;
     }
 
 }
