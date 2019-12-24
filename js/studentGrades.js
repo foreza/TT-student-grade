@@ -77,8 +77,39 @@ function editActionWithStudentID(id){
 }
 
 function updateRowWithStudentID(id){
-        alert(`Updating: ${id}`);
 
+
+        // If update was selected, we want to update the view 
+
+        // Get the dom
+        const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
+        const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
+        
+        // Access the 2nd child which should be the input
+        const nameColItemInput = nameColItem.children[1].value;
+        const gradeColItemInput = gradeColItem.children[1].value;
+
+
+        alert(`Updating: ${id} for ${nameColItemInput} with ${gradeColItemInput} `);
+
+        // Update the data model (todo: do validation here)
+
+        for (var i = 0; i <students.length; ++i){
+            // Loop until we find a matching ID
+            if (id == students[i].id){
+                students[i].name =  nameColItemInput;
+                students[i].grade = gradeColItemInput;
+                alert('Found id for update')
+                break;
+            }
+
+        }
+
+        // Update the view
+        nameColItem.children[0].innerHTML = nameColItemInput;
+        gradeColItem.children[0].innerHTML = gradeColItemInput;
+
+        // Handle the edit view
         disableEditingNameViewForStudentID(id);
         disableEditingGradeViewForStudentID(id);
         disableEditingOptionViewForStudentID(id);
@@ -88,6 +119,7 @@ function updateRowWithStudentID(id){
 function cancelActionWithStudentID(id){
     alert(`Canceling Action for: ${id}`);
 
+    // Handle the edit view
     disableEditingNameViewForStudentID(id);
     disableEditingGradeViewForStudentID(id);
     disableEditingOptionViewForStudentID(id);
