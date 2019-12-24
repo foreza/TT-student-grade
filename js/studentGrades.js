@@ -442,6 +442,7 @@ function sortStudentCollectionByNameDescending(){
     renderStudentGradeTable(students);
 
     // TODO: Toggle the view carat
+    document.querySelector("#nameSortStateCaret").textContent = "(desc)"
 
 
 
@@ -456,6 +457,8 @@ function sortStudentCollectionByNameAscending(){
     renderStudentGradeTable(students);
     
     // TODO: Toggle the view carat
+    document.querySelector("#nameSortStateCaret").textContent = "(asc)"
+
 
 
 }
