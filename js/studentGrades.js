@@ -7,6 +7,8 @@ const students = [
     {id: 3, name: 'Fa', grade: 88},
     ];
 
+// ID uniqueifier
+let startingID = students.length; // Set this to the input length for now and increment this
     
 // Maintain reference to the tBody 
 const tbody = document.querySelector('#table-grades tbody');
@@ -46,9 +48,9 @@ function attemptAddNewRow(){
 // TODO: Do some form validation here as well
     if (isValidInputForForm()){
         let newStudent = {
-            id: students.length,    // TODO: How are we assigning IDs?
+            id: startingID++,    // TODO: How are we assigning IDs?
             name: tFooterNameInput.value,
-            grade: tFooterGradeInput.value
+            grade: parseInt(tFooterGradeInput.value)
         }
     
         addNewStudentToArray(newStudent);
@@ -56,7 +58,7 @@ function attemptAddNewRow(){
         // Clear input after
     
         tFooterNameInput.value = "";
-        tFooterGradeInput.value = "";
+        tFooterGradeInput.value = 0;
     } else 
     alert ('Unable to add new row; check to make sure the form is filled out.');
 
