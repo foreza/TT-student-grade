@@ -91,7 +91,6 @@ function updateRowWithStudentID(id){
         const nameColItemInput = nameColItem.children[1].value;
         const gradeColItemInput = gradeColItem.children[1].value;
 
-
         alert(`Updating: ${id} for ${nameColItemInput} with ${gradeColItemInput} `);
 
         // Update the data model (todo: do validation here)
@@ -144,7 +143,7 @@ function enableEditingNameViewForStudentID(id){
         // Create an input with the existing value as placeholder
         const inputForName = document.createElement('input')
         inputForName.setAttribute('type', "text");
-        inputForName.setAttribute('placeholder', nameColItemVal.innerHTML);
+        inputForName.setAttribute('value', nameColItemVal.innerHTML);
         nameColItem.appendChild(inputForName);
 
 
