@@ -123,6 +123,10 @@ function updateRowWithStudentID(id){
             nameColItem.children[0].innerHTML = nameColItemInput;
             gradeColItem.children[0].innerHTML = gradeColItemInput;
 
+            // Set the caret to a 'dirty' value to indicate it can be resorted
+            document.querySelector("#nameSortStateCaret").textContent = "*"
+
+
             // Handle the edit view
             disableEditingNameViewForStudentID(id);
             disableEditingGradeViewForStudentID(id);
