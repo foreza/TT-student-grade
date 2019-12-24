@@ -45,8 +45,7 @@ function addNewStudentToArray(studentObj){
 
 function attemptAddNewRow(){
 
-// TODO: Do some form validation here as well
-    if (isValidInputForForm()){
+    if (isValidInputForFooterForm()){
         let newStudent = {
             id: startingID++,    // TODO: How are we assigning IDs?
             name: tFooterNameInput.value,
@@ -83,7 +82,13 @@ function updateRowWithStudentID(id){
 
         // If update was selected, we want to update the view 
 
-        // Get the dom
+  
+
+        // Validate
+
+        if (isValidInputForEditOfID(id)) {
+
+                  // Get the dom
         const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
         const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
         
@@ -91,29 +96,32 @@ function updateRowWithStudentID(id){
         const nameColItemInput = nameColItem.children[1].value;
         const gradeColItemInput = gradeColItem.children[1].value;
 
-        alert(`Updating: ${id} for ${nameColItemInput} with ${gradeColItemInput} `);
 
-        // Update the data model (todo: do validation here)
+            alert(`Updating: ${id} for ${nameColItemInput} with ${gradeColItemInput} `);
 
-        for (var i = 0; i <students.length; ++i){
-            // Loop until we find a matching ID
-            if (id == students[i].id){
-                students[i].name =  nameColItemInput;
-                students[i].grade = gradeColItemInput;
-                alert('Found id for update')
-                break;
+            // Update the data model (todo: do validation here)
+
+            for (var i = 0; i <students.length; ++i){
+                // Loop until we find a matching ID
+                if (id == students[i].id){
+                    students[i].name =  nameColItemInput;
+                    students[i].grade = gradeColItemInput;
+                    alert('Found id for update')
+                    break;
+                }
+
             }
 
-        }
+            // Update the view
+            nameColItem.children[0].innerHTML = nameColItemInput;
+            gradeColItem.children[0].innerHTML = gradeColItemInput;
 
-        // Update the view
-        nameColItem.children[0].innerHTML = nameColItemInput;
-        gradeColItem.children[0].innerHTML = gradeColItemInput;
+            // Handle the edit view
+            disableEditingNameViewForStudentID(id);
+            disableEditingGradeViewForStudentID(id);
+            disableEditingOptionViewForStudentID(id);
 
-        // Handle the edit view
-        disableEditingNameViewForStudentID(id);
-        disableEditingGradeViewForStudentID(id);
-        disableEditingOptionViewForStudentID(id);
+    }
 
 }
 
@@ -338,10 +346,25 @@ function renderStudentGradeTable(studentGradeList) {
 }
 
 
-function isValidInputForForm(){
+function isValidInputForFooterForm(){
 
-    // Check name input
-    if (validateNameInput() && validateGradeInput()){
+    // Check name / grade input for footer  
+    if (validateNameInput(tFooterNameInput) && validateGradeInput(tFooterGradeInput)){
+        return true;
+    } else {
+        return false;
+    }
+
+}
+
+function isValidInputForEditOfID(id){
+
+    const nameColElement = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0].children[1];
+    const gradeColElement = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1].children[1];
+
+
+     // Check name /grade input for footer and 
+     if (validateNameInput(nameColElement) && validateGradeInput(gradeColElement)){
         return true;
     } else {
         return false;
@@ -350,28 +373,28 @@ function isValidInputForForm(){
 }
 
 // Name validation
-function validateNameInput(){
+function validateNameInput(element){
     
     // Check to ensure the value is not empty
-    if (tFooterNameInput.value != "") {
-        tFooterNameInput.removeAttribute('class', 'error');
+    if (element.value != "") {
+        element.removeAttribute('class', 'error');
         return true;
     } else {
-        tFooterNameInput.setAttribute('class', 'error');
+        element.setAttribute('class', 'error');
         return false;   
     }
 
 }
 
 // Grade validation
-function validateGradeInput(){
+function validateGradeInput(element){
 
     // TODO: Alert due to specific error?
-    if (tFooterGradeInput.value != "" && tFooterGradeInput.value >= 0 && tFooterGradeInput.value <= 100){
-        tFooterGradeInput.removeAttribute('class', 'error');
+    if (element.value != "" && element.value >= 0 && element.value <= 100){
+        element.removeAttribute('class', 'error');
         return true; 
     } else {
-        tFooterGradeInput.setAttribute('class', 'error');
+        element.setAttribute('class', 'error');
         return false;
     }
 
