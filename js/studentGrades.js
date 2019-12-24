@@ -405,23 +405,42 @@ function validateGradeInput(element){
 
 }
 
+function clearViewTable(){
+    // Delete tbody OR
+    // tbody.remove();
+    // While loop to delete (TODO: find a better way)
+    while (tbody.children.length > 0) {
+        tbody.lastChild.remove();
+    }
+
+}
+
+
 function sortStudentCollectionByNameDescending(){
 
     // Sort the data
     students.sort(compareStudentNameDesc);
 
+    // Re-render student table
+    clearViewTable();
+    renderStudentGradeTable(students);
+
     // TODO: Toggle the view carat
 
-    console.log(students);
+
 
 }
 
 
-function sortCollectionAscending(){
+function sortStudentCollectionByNameAscending(){
 
     // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
     students.sort(compareStudentNameDesc).reverse();
-    console.log(students);
+    clearViewTable();
+    renderStudentGradeTable(students);
+    
+    // TODO: Toggle the view carat
+
 
 }
 
