@@ -17,6 +17,19 @@
 }
 
 
+.darkMode #table-grades tr td input[type="text"], .darkMode #table-grades tr td input[type="number"]{
+    background: #000000;
+    color: #ffffff;     /* Set all font color to white */
+
+}
+
+/* Error Input Styles */
+
+#table-grades tr td input[type="text"].error , #table-grades tr td input[type="number"].error  {
+    border: 2px solid red;
+}
+
+
 /* Header content styles */
 
 #header-setting {
@@ -71,10 +84,11 @@ h1 {
     text-align: center;
 }
 
-#table-grades tr td input[type="text"] {
+#table-grades tr td input[type="text"], #table-grades tr td input[type="number"] {
     font: unset;
     text-align: center;
 }
+
 
 #table-grades tr td input[type="button"] {
     width: 50%;
@@ -123,17 +137,31 @@ h1 {
     display: block;
 }
 
+/* By default, the edit section should not be displayed */
+#table-grades .edit-content-hidden{
+    display: none;
+}
 
-#table-grades .dropdown-content a {
+/* When the editable class is added, show the element */
+#table-grades .is-editable{
+    display: block;
+}
+
+
+#table-grades .dropdown-content a, #table-grades .is-editable a {
     height: 1rem;
     display: block;
     font-size: 1rem;    
     border: 1px dashed;
 }
 
-#table-grades .dropdown-content a:hover {
+#table-grades .dropdown-content a:hover, #table-grades .is-editable a:hover {
     font-weight: 900;
     background-color: #777777;
+}
+
+#nameSortStateCaret {
+    font-size: 0.3em;
 }
 
 

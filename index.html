@@ -6,13 +6,12 @@
 		<meta name="description" content=""/>
 		<meta name="author" content=""/>
 		<link rel="stylesheet" href="css/style.css"/>
-		<script src="js/script.js"></script>
 	</head>
 	<body id="body-content">
 		<header>
 			<!-- TODO: Implement a toggle between Light/Dark Mode  -->
 			<div id="header-setting">
-				<button onclick="" id="darkModeToggle" value="">View in Dark Mode</button>
+				<button onclick="toggleDarkMode()" id="darkModeToggle" value="">Toggle Dark Mode</button>
 			</div>
 		</header>
 		<main>
@@ -21,63 +20,35 @@
 				<!-- Table Header -->
 				<thead>
 					<tr>
-						<th>Name</th>
+						<th onclick="changeSortViewStateAndSort()">Name <span id="nameSortStateCaret">*</span></th>
 						<th>Grade</th>
 						<th>Options</th>
 					</tr>
 				</thead>
 				<!-- (Sample) Table Content -->
 				<tbody>
-					<tr>
-						<td>
-							<input type="text" value="JC"/>
-						</td>
-						<td>
-							<input type="text" value="25%"/>
-						</td>
-						<td>
-							<div class="on-hover-show">
-								<button class="on-hover-button">...</button>
-								<div class="dropdown-content">
-									<a href="#">Edit</a>
-									<a href="#">Delete</a>
-								</div>
-							</div>
-						</td>
-					</tr>
-					<tr>
-						<td>
-							<input type="text" value="JC"/>
-						</td>
-						<td>
-							<input type="text" value="25%"/>
-						</td>
-						<td>
-							<div class="on-hover-show">
-								<button class="on-hover-button">...</button>
-								<div class="dropdown-content">
-									<a href="#">Edit</a>
-									<a href="#">Delete</a>
-								</div>
-							</div>
-						</td>
-					</tr>
+					<!-- Content is inserted here dynamically -->
 				</tbody>
 				<tfoot>
 					<tr>
 						<td>
-							<input type="text" placeholder="Name"/>
+							<input id="input-name" type="text" placeholder="Name" required/>
 						</td>
 						<td>
-							<input type="text" placeholder="Grade"/>
+							<input id="input-grade" type="number" min="0" max="100" placeholder="0" required/>
 						</td>
 						<td>
-							<input type="button" value="Add"/>
+							<input onclick="attemptAddNewRow()" type="button" value="Add"/>
 						</td>
 					</tr>
 				</tfoot>
 			</table>
 		</main>
 		<footer></footer>
+
+		<!-- Load JS at the end of the document -->
+		<script src="js/script.js"></script>
+		<script src="js/studentGrades.js"></script>
+
 	</body>
 </html>
