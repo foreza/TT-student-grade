@@ -349,59 +349,6 @@ function renderStudentGradeTable(studentGradeList) {
 }
 
 
-function isValidInputForFooterForm(){
-
-    // Check name / grade input for footer  
-    if (validateNameInput(tFooterNameInput) && validateGradeInput(tFooterGradeInput)){
-        return true;
-    } else {
-        return false;
-    }
-
-}
-
-function isValidInputForEditOfID(id){
-
-    const nameColElement = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0].children[1];
-    const gradeColElement = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1].children[1];
-
-
-     // Check name /grade input for footer and 
-     if (validateNameInput(nameColElement) && validateGradeInput(gradeColElement)){
-        return true;
-    } else {
-        return false;
-    }
-
-}
-
-// Name validation
-function validateNameInput(element){
-    
-    // Check to ensure the value is not empty
-    if (element.value != "") {
-        element.removeAttribute('class', 'error');
-        return true;
-    } else {
-        element.setAttribute('class', 'error');
-        return false;   
-    }
-
-}
-
-// Grade validation
-function validateGradeInput(element){
-
-    // TODO: Alert due to specific error?
-    if (element.value != "" && element.value >= 0 && element.value <= 100){
-        element.removeAttribute('class', 'error');
-        return true; 
-    } else {
-        element.setAttribute('class', 'error');
-        return false;
-    }
-
-}
 
 
 
