@@ -15,7 +15,6 @@ const students = [
 // ID uniqueifier
 let startingID = students.length; // Set this to the input length for now and increment this
 
-let sortNameState = 0;          // Keep track of the current sort view state
     
 // Maintain reference to the tBody 
 const tbody = document.querySelector('#table-grades tbody');
@@ -26,19 +25,12 @@ const tFooterGradeInput = document.querySelector('#input-grade');
 
 const uniqueIDPrefix = "student-";
 
-
 renderStudentGradeTable(students);
 
 
 
 
-
-
-
-
 // Functions
-
-
 function addNewStudentToArray(studentObj){
 
     students.push(studentObj);      // Add it to the actual array
@@ -411,83 +403,13 @@ function validateGradeInput(element){
 
 }
 
-function clearViewTable(){
-    // Delete tbody OR
-    // tbody.remove();
-    // While loop to delete (TODO: find a better way)
-    while (tbody.children.length > 0) {
-        tbody.lastChild.remove();
-    }
-
-}
-
-
-function changeSortViewStateAndSort(){
-
-    if (sortNameState === 0) {
-        sortStudentCollectionByNameDescending();
-        sortNameState = 1;
-        return;
-    } if (sortNameState === 1) {
-        sortStudentCollectionByNameAscending();
-        sortNameState = 0;
-    }
-
-}
-
-
-function sortStudentCollectionByNameDescending(){
-
-    // Sort the data
-    students.sort(compareStudentNameDesc);
-
-    // Re-render student table
-    clearViewTable();
-    renderStudentGradeTable(students);
-
-    // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").textContent = "(desc)"
 
 
 
-}
-
-
-function sortStudentCollectionByNameAscending(){
-
-    // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
-    students.sort(compareStudentNameDesc).reverse();
-    clearViewTable();
-    renderStudentGradeTable(students);
-    
-    // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").textContent = "(asc)"
 
 
 
-}
-
-function compareStudentNameDesc(a, b){
-
-    // Convert to the same case
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
-
-    // Only need to iterate as long as the shorter string
-    const shortestLen = nameA.length < nameB.length ? nameA.length : nameB.length;  
-
-    for (var i = 0; i < shortestLen; ++i){
-        
-        // Check if one of them is bigger or not
-        if (nameA.charCodeAt(i) > nameB.charCodeAt(i)){
-            return 1;
-        } else if (nameA.charCodeAt(i) < nameB.charCodeAt(i)){
-            return - 1;
-        } 
-
-        // continue loop if the characters at same position are the same
-
-    }
 
 
-}
+
+
