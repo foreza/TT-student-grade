@@ -12,6 +12,11 @@ function clearViewTable(){
 
 }
 
+function setSortStateDirty(){
+       // Set the caret to a 'dirty' value to indicate it can be resorted
+       document.querySelector("#nameSortStateCaret").textContent = "*"
+}
+
 
 // Function invoked by clicking the header for name 
 // This will toggle the sortNameState and call the appropriate sort

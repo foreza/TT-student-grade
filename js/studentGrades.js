@@ -15,7 +15,6 @@ const students = [
 // ID uniqueifier
 let startingID = students.length; // Set this to the input length for now and increment this
 
-    
 // Maintain reference to the tBody 
 const tbody = document.querySelector('#table-grades tbody');
 
@@ -28,40 +27,105 @@ const uniqueIDPrefix = "student-";
 renderStudentGradeTable(students);
 
 
+// Data Model Manipulation
 
 
-// Functions
-function addNewStudentToArray(studentObj){
-
+// CREATE: Add new student to the model
+function model_addNewStudent(studentObj){
     students.push(studentObj);      // Add it to the actual array
+}
 
-    // Update view. This is the naive approach; change this later
-    tbody.appendChild(returnCreatedRowItemForStudent(studentObj));
+// UPDATE: Update an existing student in the local storage given the student object and id for lookup
+function model_updateExistingStudent(studentObj, id){
 
+    for (var i = 0; i <students.length; ++i){
+        // Loop until we find a matching ID
+        if (id == students[i].id){
+            students[i].name =  studentObj.name;
+            students[i].grade = studentObj.grade;
+            alert('Found id for update')
+            break;
+        }
+
+    }
 
 }
 
+function model_deleteStudent(id){
+    // For removing from the data structure, we'll do brute force approach for now
+    for (var i = 0; i <students.length; ++i){
 
+        // Loop until we find a matching ID
+        if (id == students[i].id){
+
+            students.splice(i, 1);  
+            alert('Found id for deletion')
+
+            break;
+        }
+
+    }
+}
+
+
+
+
+// View Manipulation
+
+function view_updateViewWithNewStudent(studentObj){
+    tbody.appendChild(returnCreatedRowItemForStudent(studentObj));
+}
+
+function view_deleteStudentFromView(id){
+    document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
+}
+
+function view_updateViewWithModifiedStudent(studentObj, id){
+
+    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
+    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
+
+    nameColItem.children[0].innerHTML = studentObj.name;
+    gradeColItem.children[0].innerHTML = studentObj.grade;
+}
+
+function view_clearFooterInputForm(){
+    tFooterNameInput.value = "";
+    tFooterGradeInput.value = 0;
+}
+
+
+
+
+
+
+// Functions called by HTML file
+
+// [ON-CLICK] Function called by index when the footer form is used
+// TODO: Refactor function name to use 'click-'
 function attemptAddNewRow(){
 
     if (isValidInputForFooterForm()){
+
         let newStudent = {
             id: startingID++,    // TODO: How are we assigning IDs?
             name: tFooterNameInput.value,
             grade: parseInt(tFooterGradeInput.value)
         }
     
-        addNewStudentToArray(newStudent);
-    
-        // Clear input after
-    
-        tFooterNameInput.value = "";
-        tFooterGradeInput.value = 0;
+        model_addNewStudent(newStudent);
+        view_updateViewWithNewStudent(newStudent);
+        view_clearFooterInputForm();
     } else 
     alert ('Unable to add new row; check to make sure the form is filled out.');
+}
 
-   
 
+// [ON-CLICK] Function called by index when the row's 'delete' is clicked
+// TODO: Refactor function name to use 'click-'
+function deleteRowWithStudentID(id){
+    model_deleteStudent(id);
+    view_deleteStudentFromView(id);
 }
 
 
@@ -78,45 +142,27 @@ function editActionWithStudentID(id){
 
 function updateRowWithStudentID(id){
 
-
-        // If update was selected, we want to update the view 
-
-  
-
         // Validate
-
         if (isValidInputForEditOfID(id)) {
 
-                  // Get the dom
+        // Get the dom
         const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
         const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
         
-        // Access the 2nd child which should be the input
-        const nameColItemInput = nameColItem.children[1].value;
-        const gradeColItemInput = gradeColItem.children[1].value;
-
-
-            alert(`Updating: ${id} for ${nameColItemInput} with ${gradeColItemInput} `);
+        let theStudent = {
+            id: id,    // TODO: How are we assigning IDs?
+            name: nameColItem.children[1].value,
+            grade: parseInt(gradeColItem.children[1].value)
+        }
 
             // Update the data model (todo: do validation here)
-
-            for (var i = 0; i <students.length; ++i){
-                // Loop until we find a matching ID
-                if (id == students[i].id){
-                    students[i].name =  nameColItemInput;
-                    students[i].grade = gradeColItemInput;
-                    alert('Found id for update')
-                    break;
-                }
-
-            }
-
+            model_updateExistingStudent(theStudent, id);
+        
             // Update the view
-            nameColItem.children[0].innerHTML = nameColItemInput;
-            gradeColItem.children[0].innerHTML = gradeColItemInput;
+            view_updateViewWithModifiedStudent(theStudent, id);
 
-            // Set the caret to a 'dirty' value to indicate it can be resorted
-            document.querySelector("#nameSortStateCaret").textContent = "*"
+            // Indicate that we may resort the data.
+            setSortStateDirty();
 
 
             // Handle the edit view
@@ -178,8 +224,6 @@ function enableEditingGradeViewForStudentID(id){
       inputForGrade.setAttribute('value', gradeColItemVal.innerHTML);
       gradeColItem.appendChild(inputForGrade);
 
-
-
 }
 
 function disableEditingNameViewForStudentID(id){
@@ -231,31 +275,11 @@ function disableEditingOptionViewForStudentID(id){
 }
 
 
-function deleteRowWithStudentID(id){
-    alert(`Deleting: ${id}`);
 
-    // For removing from the data structure, we'll do brute force approach for now
-
-    for (var i = 0; i <students.length; ++i){
-
-        // Loop until we find a matching ID
-        if (id == students[i].id){
-
-            students.splice(i, 1);  
-            alert('Found id for deletion')
-
-            break;
-        }
-
-    }
-
-    // Remove from the view as well TODO: Separate DOM manipulation from modifying the data model.
-    document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
-
-}
 
 
 // Helper function that returns a new row object
+// TODO: Break this up into smaller functions
 function returnCreatedRowItemForStudent(student){
 
     const row = document.createElement('tr');   
