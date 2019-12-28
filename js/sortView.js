@@ -1,22 +1,10 @@
 let sortNameState = 0;          // Keep track of the current sort name view state
 let sortGradeState = 0;         // Keep track of the current sort grade view state
+
+// TODO: Move all of the document query selection behaviors out of this file
 const upCaret = '&and;';
 const downCaret = '&or;';
 
-
-// Function that will access the table body, and iterate/remove all nodes
-function clearViewTable() {
-
-    const viewTableBody = document.querySelector('#table-grades tbody');
-
-    while (viewTableBody.children.length > 0) {
-        viewTableBody.lastChild.remove();
-    }
-
-}
-
-
-// 
 
 function view_setNameSortStateCaretDown() {
     document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
@@ -85,9 +73,6 @@ function sortStudentCollectionByNameDescending(studentArr) {
     // Sort the data
     studentArr.sort(compareStudentNameDesc);
 
-    // Re-render student table
-    clearViewTable();
-    renderStudentGradeTable(students);
     view_setNameSortStateCaretDown();
 }
 
@@ -98,8 +83,7 @@ function sortStudentCollectionByNameAscending(studentArr) {
 
     // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
     studentArr.sort(compareStudentNameDesc).reverse();
-    clearViewTable();
-    renderStudentGradeTable(students);
+
     view_setNameSortStateCaretUp();
 
 }
@@ -138,9 +122,6 @@ function sortStudentCollectionByGradeDescending(studentArr) {
     // Sort the data
     studentArr.sort(compareStudentGradeDesc);
 
-    // Re-render student table
-    clearViewTable();
-    renderStudentGradeTable(students);
     view_setGradeSortStateCaretDown();
 
 }
@@ -151,9 +132,6 @@ function sortStudentCollectionByGradeAscending(studentArr) {
     // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
     studentArr.sort(compareStudentGradeDesc).reverse();
 
-    // Re-render student table
-    clearViewTable();
-    renderStudentGradeTable(students);
     view_setGradeSortStateCaretUp();
 
 }

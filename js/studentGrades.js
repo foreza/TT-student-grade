@@ -24,13 +24,13 @@ const tFooterGradeInput = document.querySelector('#input-grade');
 
 const uniqueIDPrefix = "student-";
 
-renderStudentGradeTable(students);
+view_renderStudentGradeTable(students);
 
 
 // Data Model Manipulation
 
 
-// CREATE: Add new student to the model
+// CREATE: Add new student given a student object
 function model_addNewStudent(studentObj){
     students.push(studentObj);      // Add it to the actual array
 }
@@ -51,6 +51,7 @@ function model_updateExistingStudent(studentObj, id){
 
 }
 
+// DELETE: Delete an existing student given an ID
 function model_deleteStudent(id){
     // For removing from the data structure, we'll do brute force approach for now
     for (var i = 0; i <students.length; ++i){
@@ -72,14 +73,37 @@ function model_deleteStudent(id){
 
 // View Manipulation
 
-function view_updateViewWithNewStudent(studentObj){
-    tbody.appendChild(returnCreatedRowItemForStudent(studentObj));
+// Function to render grades 
+function view_renderStudentGradeTable(studentGradeList) {
+
+    studentGradeList.forEach(student => {
+        tbody.appendChild(util_returnCreatedRowItemForStudent(student));
+        });
+
 }
 
+// Function that will access the table body, and iterate/remove all nodes
+function view_clearViewTable() {
+
+    while (tbody.children.length > 0) {
+        tbody.lastChild.remove();
+    }
+
+}
+
+// Update the view given a student object
+function view_updateViewWithNewStudent(studentObj){
+    tbody.appendChild(util_returnCreatedRowItemForStudent(studentObj));
+}
+
+
+// Delete student from view given an id
 function view_deleteStudentFromView(id){
     document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
 }
 
+
+// Update the row for a student given the id and student object
 function view_updateViewWithModifiedStudent(studentObj, id){
 
     const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
@@ -89,6 +113,8 @@ function view_updateViewWithModifiedStudent(studentObj, id){
     gradeColItem.children[0].innerHTML = studentObj.grade;
 }
 
+
+// Clear the bottom input form
 function view_clearFooterInputForm(){
     tFooterNameInput.value = "";
     tFooterGradeInput.value = 0;
@@ -101,9 +127,9 @@ function view_clearFooterInputForm(){
 
 // Functions called by HTML file
 
+
 // [ON-CLICK] Function called by index when the footer form is used
-// TODO: Refactor function name to use 'click-'
-function attemptAddNewRow(){
+function click_attemptAddNewRow(){
 
     if (isValidInputForFooterForm()){
 
@@ -124,8 +150,7 @@ function attemptAddNewRow(){
 
 
 // [ON-CLICK] Function called by index when the row's 'delete' is clicked
-// TODO: Refactor function name to use 'click-'
-function deleteRowWithStudentID(id){
+function click_deleteRowWithStudentID(id){
     model_deleteStudent(id);
     view_deleteStudentFromView(id);
 }
@@ -134,15 +159,21 @@ function deleteRowWithStudentID(id){
 // [ON-CLICK] Function called by index when the header for name sort is clicked
 function click_sortTableByName(){
     changeSortViewNameStateAndSort(students); // Pass this by reference
+    view_clearViewTable();
+    view_renderStudentGradeTable(students);
 }
+
 
 // [ON-CLICK] Function called by index when the header for name sort is clicked
 function click_sortTableByGrade(){
     changeSortViewGradeStateAndSort(students);  // Pass this by reference
+    view_clearViewTable();
+    view_renderStudentGradeTable(students);
 }
 
-// TODO: Implement edit function
-function editActionWithStudentID(id){
+
+// [ON-CLICK] Function called by the index for a specific id 
+function click_editActionWithStudentID(id){
     alert(`Begin editing: ${id}`);
 
     enableEditingNameViewForStudentID(id);
@@ -201,6 +232,8 @@ function cancelActionWithStudentID(id){
 
 // Editing view functions
 
+
+// Enables editing for the specific name field
 function enableEditingNameViewForStudentID(id){
 
         const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
@@ -215,11 +248,27 @@ function enableEditingNameViewForStudentID(id){
         inputForName.setAttribute('value', nameColItemVal.innerHTML);
         nameColItem.appendChild(inputForName);
 
+}
 
-        
+
+// Disables editing for the specific name field
+function disableEditingNameViewForStudentID(id){
+
+    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
+
+       // Show the value
+       const nameColItemVal = nameColItem.children[0];
+       nameColItemVal.removeAttribute('class', 'edit-content-hidden');
+
+       // Access and destroy the input
+       const nameColItemInput = nameColItem.children[1];
+       nameColItemInput.remove();
+
 
 }
 
+
+// Enables editing for the specific grade field
 function enableEditingGradeViewForStudentID(id){
 
     const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
@@ -238,21 +287,8 @@ function enableEditingGradeViewForStudentID(id){
 
 }
 
-function disableEditingNameViewForStudentID(id){
 
-    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
-
-       // Show the value
-       const nameColItemVal = nameColItem.children[0];
-       nameColItemVal.removeAttribute('class', 'edit-content-hidden');
-
-       // Access and destroy the input
-       const nameColItemInput = nameColItem.children[1];
-       nameColItemInput.remove();
-
-
-}
-
+// Disables editing for the specific grade field
 function disableEditingGradeViewForStudentID(id){
 
     const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
@@ -267,6 +303,8 @@ function disableEditingGradeViewForStudentID(id){
 
 }
 
+
+// Enables editing for the specific option id
 function enableEditingOptionViewForStudentID(id){
     const optionsColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[2];
     // Hide the options button
@@ -275,6 +313,8 @@ function enableEditingOptionViewForStudentID(id){
     optionsColItem.children[1].children[0].setAttribute('class','is-editable');
 }
 
+
+// Disables editing for the specific option id
 function disableEditingOptionViewForStudentID(id){
     const optionsColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[2];
 
@@ -287,12 +327,9 @@ function disableEditingOptionViewForStudentID(id){
 }
 
 
-
-
-
 // Helper function that returns a new row object
 // TODO: Break this up into smaller functions
-function returnCreatedRowItemForStudent(student){
+function util_returnCreatedRowItemForStudent(student){
 
     const row = document.createElement('tr');   
 
@@ -324,8 +361,8 @@ function returnCreatedRowItemForStudent(student){
 
     editLink.setAttribute('href', "#");
     deleteLink.setAttribute('href', "#");
-    editLink.setAttribute('onclick', `editActionWithStudentID(${student.id})`);
-    deleteLink.setAttribute('onclick', `deleteRowWithStudentID(${student.id})`);
+    editLink.setAttribute('onclick', `click_editActionWithStudentID(${student.id})`);
+    deleteLink.setAttribute('onclick', `click_deleteRowWithStudentID(${student.id})`);
 
     editLink.textContent = 'Edit';
     deleteLink.textContent = 'Delete';
@@ -375,14 +412,7 @@ function returnCreatedRowItemForStudent(student){
 }
 
 
-// Function to render grades 
-function renderStudentGradeTable(studentGradeList) {
 
-    studentGradeList.forEach(student => {
-        tbody.appendChild(returnCreatedRowItemForStudent(student));
-        });
-
-}
 
 
 
