@@ -1,5 +1,7 @@
 let sortNameState = 0;          // Keep track of the current sort name view state
 let sortGradeState = 0;         // Keep track of the current sort grade view state
+const upCaret = '&and;';
+const downCaret = '&or;';
 
 
 // Function that will access the table body, and iterate/remove all nodes
@@ -66,7 +68,7 @@ function sortStudentCollectionByNameDescending(){
     renderStudentGradeTable(students);
 
     // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").innerHTML = '&#9660;'
+    document.querySelector("#nameSortStateCaret").innerHTML = upCaret;
 
 
 
@@ -83,7 +85,7 @@ function sortStudentCollectionByNameAscending(){
     renderStudentGradeTable(students);
     
     // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").innerHTML = '&#9650;';
+    document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
 
 
 
@@ -128,7 +130,7 @@ function sortStudentCollectionByGradeDescending(){
     renderStudentGradeTable(students);
 
     // TODO: Toggle the view carat
-    document.querySelector("#gradeSortStateCaret").innerHTML = '&#9660;'
+    document.querySelector("#gradeSortStateCaret").innerHTML = upCaret;
 
 
 }
@@ -142,7 +144,7 @@ function sortStudentCollectionByGradeAscending(){
       renderStudentGradeTable(students);
       
       // TODO: Toggle the view carat
-      document.querySelector("#gradeSortStateCaret").innerHTML = '&#9650;';
+      document.querySelector("#gradeSortStateCaret").innerHTML = downCaret;
 
 
 
