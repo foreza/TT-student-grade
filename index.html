@@ -20,8 +20,8 @@
 				<!-- Table Header -->
 				<thead>
 					<tr>
-						<th onclick="changeSortViewStateAndSort()">Name <span id="nameSortStateCaret">*</span></th>
-						<th>Grade</th>
+						<th onclick="changeSortViewNameStateAndSort()">Name <span id="nameSortStateCaret">*</span></th>
+						<th onclick="changeSortViewGradeStateAndSort()">Grade <span id="gradeSortStateCaret">*</span></th>
 						<th>Options</th>
 					</tr>
 				</thead>
@@ -47,7 +47,9 @@
 		<footer></footer>
 
 		<!-- Load JS at the end of the document -->
-		<script src="js/script.js"></script>
+		<script src="js/darkMode.js"></script>
+		<script src="js/input-validation.js"></script>
+		<script src="js/sortView.js"></script>
 		<script src="js/studentGrades.js"></script>
 
 	</body>

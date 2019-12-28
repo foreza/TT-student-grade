@@ -15,8 +15,6 @@ const students = [
 // ID uniqueifier
 let startingID = students.length; // Set this to the input length for now and increment this
 
-let sortNameState = 0;          // Keep track of the current sort view state
-    
 // Maintain reference to the tBody 
 const tbody = document.querySelector('#table-grades tbody');
 
@@ -26,50 +24,110 @@ const tFooterGradeInput = document.querySelector('#input-grade');
 
 const uniqueIDPrefix = "student-";
 
-
 renderStudentGradeTable(students);
 
 
+// Data Model Manipulation
 
 
-
-
-
-
-// Functions
-
-
-function addNewStudentToArray(studentObj){
-
+// CREATE: Add new student to the model
+function model_addNewStudent(studentObj){
     students.push(studentObj);      // Add it to the actual array
+}
 
-    // Update view. This is the naive approach; change this later
-    tbody.appendChild(returnCreatedRowItemForStudent(studentObj));
+// UPDATE: Update an existing student in the local storage given the student object and id for lookup
+function model_updateExistingStudent(studentObj, id){
 
+    for (var i = 0; i <students.length; ++i){
+        // Loop until we find a matching ID
+        if (id == students[i].id){
+            students[i].name =  studentObj.name;
+            students[i].grade = studentObj.grade;
+            alert('Found id for update')
+            break;
+        }
+
+    }
 
 }
 
+function model_deleteStudent(id){
+    // For removing from the data structure, we'll do brute force approach for now
+    for (var i = 0; i <students.length; ++i){
 
+        // Loop until we find a matching ID
+        if (id == students[i].id){
+
+            students.splice(i, 1);  
+            alert('Found id for deletion')
+
+            break;
+        }
+
+    }
+}
+
+
+
+
+// View Manipulation
+
+function view_updateViewWithNewStudent(studentObj){
+    tbody.appendChild(returnCreatedRowItemForStudent(studentObj));
+}
+
+function view_deleteStudentFromView(id){
+    document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
+}
+
+function view_updateViewWithModifiedStudent(studentObj, id){
+
+    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
+    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
+
+    nameColItem.children[0].innerHTML = studentObj.name;
+    gradeColItem.children[0].innerHTML = studentObj.grade;
+}
+
+function view_clearFooterInputForm(){
+    tFooterNameInput.value = "";
+    tFooterGradeInput.value = 0;
+}
+
+
+
+
+
+
+// Functions called by HTML file
+
+// [ON-CLICK] Function called by index when the footer form is used
+// TODO: Refactor function name to use 'click-'
 function attemptAddNewRow(){
 
     if (isValidInputForFooterForm()){
+
         let newStudent = {
             id: startingID++,    // TODO: How are we assigning IDs?
             name: tFooterNameInput.value,
             grade: parseInt(tFooterGradeInput.value)
         }
     
-        addNewStudentToArray(newStudent);
-    
-        // Clear input after
-    
-        tFooterNameInput.value = "";
-        tFooterGradeInput.value = 0;
+        model_addNewStudent(newStudent);
+        view_updateViewWithNewStudent(newStudent);
+        view_clearFooterInputForm();
+        setSortStateDirty();
+        
     } else 
     alert ('Unable to add new row; check to make sure the form is filled out.');
+}
 
-   
 
+// [ON-CLICK] Function called by index when the row's 'delete' is clicked
+// TODO: Refactor function name to use 'click-'
+function deleteRowWithStudentID(id){
+    model_deleteStudent(id);
+    view_deleteStudentFromView(id);
 }
 
 
@@ -86,45 +144,27 @@ function editActionWithStudentID(id){
 
 function updateRowWithStudentID(id){
 
-
-        // If update was selected, we want to update the view 
-
-  
-
         // Validate
-
         if (isValidInputForEditOfID(id)) {
 
-                  // Get the dom
+        // Get the dom
         const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
         const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
         
-        // Access the 2nd child which should be the input
-        const nameColItemInput = nameColItem.children[1].value;
-        const gradeColItemInput = gradeColItem.children[1].value;
-
-
-            alert(`Updating: ${id} for ${nameColItemInput} with ${gradeColItemInput} `);
+        let theStudent = {
+            id: id,    // TODO: How are we assigning IDs?
+            name: nameColItem.children[1].value,
+            grade: parseInt(gradeColItem.children[1].value)
+        }
 
             // Update the data model (todo: do validation here)
-
-            for (var i = 0; i <students.length; ++i){
-                // Loop until we find a matching ID
-                if (id == students[i].id){
-                    students[i].name =  nameColItemInput;
-                    students[i].grade = gradeColItemInput;
-                    alert('Found id for update')
-                    break;
-                }
-
-            }
-
+            model_updateExistingStudent(theStudent, id);
+        
             // Update the view
-            nameColItem.children[0].innerHTML = nameColItemInput;
-            gradeColItem.children[0].innerHTML = gradeColItemInput;
+            view_updateViewWithModifiedStudent(theStudent, id);
 
-            // Set the caret to a 'dirty' value to indicate it can be resorted
-            document.querySelector("#nameSortStateCaret").textContent = "*"
+            // Indicate that we may resort the data.
+            setSortStateDirty();
 
 
             // Handle the edit view
@@ -186,8 +226,6 @@ function enableEditingGradeViewForStudentID(id){
       inputForGrade.setAttribute('value', gradeColItemVal.innerHTML);
       gradeColItem.appendChild(inputForGrade);
 
-
-
 }
 
 function disableEditingNameViewForStudentID(id){
@@ -239,31 +277,11 @@ function disableEditingOptionViewForStudentID(id){
 }
 
 
-function deleteRowWithStudentID(id){
-    alert(`Deleting: ${id}`);
 
-    // For removing from the data structure, we'll do brute force approach for now
-
-    for (var i = 0; i <students.length; ++i){
-
-        // Loop until we find a matching ID
-        if (id == students[i].id){
-
-            students.splice(i, 1);  
-            alert('Found id for deletion')
-
-            break;
-        }
-
-    }
-
-    // Remove from the view as well TODO: Separate DOM manipulation from modifying the data model.
-    document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
-
-}
 
 
 // Helper function that returns a new row object
+// TODO: Break this up into smaller functions
 function returnCreatedRowItemForStudent(student){
 
     const row = document.createElement('tr');   
@@ -357,137 +375,14 @@ function renderStudentGradeTable(studentGradeList) {
 }
 
 
-function isValidInputForFooterForm(){
-
-    // Check name / grade input for footer  
-    if (validateNameInput(tFooterNameInput) && validateGradeInput(tFooterGradeInput)){
-        return true;
-    } else {
-        return false;
-    }
-
-}
-
-function isValidInputForEditOfID(id){
-
-    const nameColElement = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0].children[1];
-    const gradeColElement = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1].children[1];
-
-
-     // Check name /grade input for footer and 
-     if (validateNameInput(nameColElement) && validateGradeInput(gradeColElement)){
-        return true;
-    } else {
-        return false;
-    }
-
-}
-
-// Name validation
-function validateNameInput(element){
-    
-    // Check to ensure the value is not empty
-    if (element.value != "") {
-        element.removeAttribute('class', 'error');
-        return true;
-    } else {
-        element.setAttribute('class', 'error');
-        return false;   
-    }
-
-}
-
-// Grade validation
-function validateGradeInput(element){
-
-    // TODO: Alert due to specific error?
-    if (element.value != "" && element.value >= 0 && element.value <= 100){
-        element.removeAttribute('class', 'error');
-        return true; 
-    } else {
-        element.setAttribute('class', 'error');
-        return false;
-    }
-
-}
-
-function clearViewTable(){
-    // Delete tbody OR
-    // tbody.remove();
-    // While loop to delete (TODO: find a better way)
-    while (tbody.children.length > 0) {
-        tbody.lastChild.remove();
-    }
-
-}
-
-
-function changeSortViewStateAndSort(){
-
-    if (sortNameState === 0) {
-        sortStudentCollectionByNameDescending();
-        sortNameState = 1;
-        return;
-    } if (sortNameState === 1) {
-        sortStudentCollectionByNameAscending();
-        sortNameState = 0;
-    }
-
-}
-
-
-function sortStudentCollectionByNameDescending(){
-
-    // Sort the data
-    students.sort(compareStudentNameDesc);
-
-    // Re-render student table
-    clearViewTable();
-    renderStudentGradeTable(students);
-
-    // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").textContent = "(desc)"
 
 
 
-}
-
-
-function sortStudentCollectionByNameAscending(){
-
-    // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
-    students.sort(compareStudentNameDesc).reverse();
-    clearViewTable();
-    renderStudentGradeTable(students);
-    
-    // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").textContent = "(asc)"
 
 
 
-}
-
-function compareStudentNameDesc(a, b){
-
-    // Convert to the same case
-    const nameA = a.name.toUpperCase();
-    const nameB = b.name.toUpperCase();
-
-    // Only need to iterate as long as the shorter string
-    const shortestLen = nameA.length < nameB.length ? nameA.length : nameB.length;  
-
-    for (var i = 0; i < shortestLen; ++i){
-        
-        // Check if one of them is bigger or not
-        if (nameA.charCodeAt(i) > nameB.charCodeAt(i)){
-            return 1;
-        } else if (nameA.charCodeAt(i) < nameB.charCodeAt(i)){
-            return - 1;
-        } 
-
-        // continue loop if the characters at same position are the same
-
-    }
 
 
-}
+
+
+
