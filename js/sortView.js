@@ -5,7 +5,7 @@ const downCaret = '&or;';
 
 
 // Function that will access the table body, and iterate/remove all nodes
-function clearViewTable(){
+function clearViewTable() {
 
     const viewTableBody = document.querySelector('#table-grades tbody');
 
@@ -18,27 +18,27 @@ function clearViewTable(){
 
 // 
 
-function view_setNameSortStateCaretDown(){
+function view_setNameSortStateCaretDown() {
     document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
 }
 
-function view_setNameSortStateCaretUp(){
+function view_setNameSortStateCaretUp() {
     document.querySelector("#nameSortStateCaret").innerHTML = upCaret;
 }
 
-function view_setGradeSortStateCaretDown(){
+function view_setGradeSortStateCaretDown() {
     document.querySelector("#gradeSortStateCaret").innerHTML = downCaret;
 }
 
-function view_setGradeSortStateCaretUp(){
+function view_setGradeSortStateCaretUp() {
     document.querySelector("#gradeSortStateCaret").innerHTML = upCaret;
 }
 
 
-function setSortStateDirty(){
-       // Set the caret to a 'dirty' value to indicate it can be resorted
-       document.querySelector("#nameSortStateCaret").textContent = "*"
-       document.querySelector("#gradeSortStateCaret").textContent = "*"
+// Set the caret to a 'dirty' value to indicate it can be resorted
+function setSortStateDirty() {
+    document.querySelector("#nameSortStateCaret").textContent = "*"
+    document.querySelector("#gradeSortStateCaret").textContent = "*"
 
 }
 
@@ -46,14 +46,14 @@ function setSortStateDirty(){
 // Function invoked by clicking the header for name 
 // This will toggle the sortNameState and call the appropriate sort
 // TODO: refactor more
-function changeSortViewNameStateAndSort(){
+function changeSortViewNameStateAndSort(studentArr) {
 
     if (sortNameState === 0) {
-        sortStudentCollectionByNameDescending();
+        sortStudentCollectionByNameDescending(studentArr);
         sortNameState = 1;
         return;
     } if (sortNameState === 1) {
-        sortStudentCollectionByNameAscending();
+        sortStudentCollectionByNameAscending(studentArr);
         sortNameState = 0;
         return;
     }
@@ -62,14 +62,14 @@ function changeSortViewNameStateAndSort(){
 
 // Function invoked by clicking the header for name 
 // This will toggle the sortGradeState and call the appropriate sort
-function changeSortViewGradeStateAndSort(){
+function changeSortViewGradeStateAndSort(studentArr) {
 
     if (sortGradeState === 0) {
-        sortStudentCollectionByGradeDescending();
+        sortStudentCollectionByGradeDescending(studentArr);
         sortGradeState = 1;
         return;
     } if (sortGradeState === 1) {
-        sortStudentCollectionByGradeAscending();
+        sortStudentCollectionByGradeAscending(studentArr);
         sortGradeState = 0;
         return;
     }
@@ -80,52 +80,49 @@ function changeSortViewGradeStateAndSort(){
 
 // Function that will sort by name descending.
 // TODO: Refactor to split view / make this file independent
-function sortStudentCollectionByNameDescending(){
+function sortStudentCollectionByNameDescending(studentArr) {
 
     // Sort the data
-    students.sort(compareStudentNameDesc);
+    studentArr.sort(compareStudentNameDesc);
 
     // Re-render student table
     clearViewTable();
     renderStudentGradeTable(students);
     view_setNameSortStateCaretDown();
-
-
 }
 
 
 // Function that will sort by name ascending.
 // TODO: Refactor to split view / make this file independent
-function sortStudentCollectionByNameAscending(){
+function sortStudentCollectionByNameAscending(studentArr) {
 
     // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
-    students.sort(compareStudentNameDesc).reverse();
+    studentArr.sort(compareStudentNameDesc).reverse();
     clearViewTable();
     renderStudentGradeTable(students);
     view_setNameSortStateCaretUp();
-
 
 }
 
 
 // Sorting function to be used by sort()
-function compareStudentNameDesc(a, b){
+function compareStudentNameDesc(a, b) {
 
     // Convert to the same case
     const nameA = a.name.toUpperCase();
     const nameB = b.name.toUpperCase();
 
     // Only need to iterate as long as the shorter string
-    const shortestLen = nameA.length < nameB.length ? nameA.length : nameB.length;  
+    const shortestLen = nameA.length < nameB.length ? nameA.length : nameB.length;
 
-    for (var i = 0; i < shortestLen; ++i){
-        
+    for (var i = 0; i < shortestLen; ++i) {
+
         // Check if one of them is bigger or not
-        if (nameA.charCodeAt(i) > nameB.charCodeAt(i)){
+        if (nameA.charCodeAt(i) > nameB.charCodeAt(i)) {
             return 1;
-        } else if (nameA.charCodeAt(i) < nameB.charCodeAt(i)){
+        } else if (nameA.charCodeAt(i) < nameB.charCodeAt(i)) {
             return - 1;
-        } 
+        }
 
         // continue loop if the characters at same position are the same
 
@@ -134,12 +131,12 @@ function compareStudentNameDesc(a, b){
 }
 
 
-    // Function that will sort by name descending.
+// Function that will sort by name descending.
 // TODO: Refactor to split view / make this file independent
-function sortStudentCollectionByGradeDescending(){
+function sortStudentCollectionByGradeDescending(studentArr) {
 
     // Sort the data
-    students.sort(compareStudentGradeDesc);
+    studentArr.sort(compareStudentGradeDesc);
 
     // Re-render student table
     clearViewTable();
@@ -149,27 +146,28 @@ function sortStudentCollectionByGradeDescending(){
 }
 
 
-function sortStudentCollectionByGradeAscending(){
+function sortStudentCollectionByGradeAscending(studentArr) {
 
-      // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
-      students.sort(compareStudentGradeDesc).reverse();
-      clearViewTable();
-      renderStudentGradeTable(students);
-      view_setGradeSortStateCaretUp();
+    // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
+    studentArr.sort(compareStudentGradeDesc).reverse();
 
+    // Re-render student table
+    clearViewTable();
+    renderStudentGradeTable(students);
+    view_setGradeSortStateCaretUp();
 
 }
 
 
-    function compareStudentGradeDesc(a, b){
+function compareStudentGradeDesc(a, b) {
 
-        const gradeA = parseInt(a.grade);
-        const gradeB = parseInt(b.grade);
+    const gradeA = parseInt(a.grade);
+    const gradeB = parseInt(b.grade);
 
-        if (gradeA > gradeB) { 
-            return -1; 
-        } if (gradeA < gradeB) {
-            return 1;
-        } return 0;
+    if (gradeA > gradeB) {
+        return -1;
+    } if (gradeA < gradeB) {
+        return 1;
+    } return 0;
 
-    }
+}

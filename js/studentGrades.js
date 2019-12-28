@@ -131,6 +131,16 @@ function deleteRowWithStudentID(id){
 }
 
 
+// [ON-CLICK] Function called by index when the header for name sort is clicked
+function click_sortTableByName(){
+    changeSortViewNameStateAndSort(students); // Pass this by reference
+}
+
+// [ON-CLICK] Function called by index when the header for name sort is clicked
+function click_sortTableByGrade(){
+    changeSortViewGradeStateAndSort(students);  // Pass this by reference
+}
+
 // TODO: Implement edit function
 function editActionWithStudentID(id){
     alert(`Begin editing: ${id}`);
