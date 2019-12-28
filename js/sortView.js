@@ -15,6 +15,26 @@ function clearViewTable(){
 
 }
 
+
+// 
+
+function view_setNameSortStateCaretDown(){
+    document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
+}
+
+function view_setNameSortStateCaretUp(){
+    document.querySelector("#nameSortStateCaret").innerHTML = upCaret;
+}
+
+function view_setGradeSortStateCaretDown(){
+    document.querySelector("#gradeSortStateCaret").innerHTML = downCaret;
+}
+
+function view_setGradeSortStateCaretUp(){
+    document.querySelector("#gradeSortStateCaret").innerHTML = upCaret;
+}
+
+
 function setSortStateDirty(){
        // Set the caret to a 'dirty' value to indicate it can be resorted
        document.querySelector("#nameSortStateCaret").textContent = "*"
@@ -35,6 +55,7 @@ function changeSortViewNameStateAndSort(){
     } if (sortNameState === 1) {
         sortStudentCollectionByNameAscending();
         sortNameState = 0;
+        return;
     }
 
 }
@@ -50,6 +71,7 @@ function changeSortViewGradeStateAndSort(){
     } if (sortGradeState === 1) {
         sortStudentCollectionByGradeAscending();
         sortGradeState = 0;
+        return;
     }
 
 
@@ -66,10 +88,7 @@ function sortStudentCollectionByNameDescending(){
     // Re-render student table
     clearViewTable();
     renderStudentGradeTable(students);
-
-    // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").innerHTML = upCaret;
-
+    view_setNameSortStateCaretDown();
 
 
 }
@@ -83,10 +102,7 @@ function sortStudentCollectionByNameAscending(){
     students.sort(compareStudentNameDesc).reverse();
     clearViewTable();
     renderStudentGradeTable(students);
-    
-    // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
-
+    view_setNameSortStateCaretUp();
 
 
 }
@@ -128,10 +144,7 @@ function sortStudentCollectionByGradeDescending(){
     // Re-render student table
     clearViewTable();
     renderStudentGradeTable(students);
-
-    // TODO: Toggle the view carat
-    document.querySelector("#gradeSortStateCaret").innerHTML = upCaret;
-
+    view_setGradeSortStateCaretDown();
 
 }
 
@@ -142,10 +155,7 @@ function sortStudentCollectionByGradeAscending(){
       students.sort(compareStudentGradeDesc).reverse();
       clearViewTable();
       renderStudentGradeTable(students);
-      
-      // TODO: Toggle the view carat
-      document.querySelector("#gradeSortStateCaret").innerHTML = downCaret;
-
+      view_setGradeSortStateCaretUp();
 
 
 }
