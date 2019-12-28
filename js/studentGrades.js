@@ -116,6 +116,8 @@ function attemptAddNewRow(){
         model_addNewStudent(newStudent);
         view_updateViewWithNewStudent(newStudent);
         view_clearFooterInputForm();
+        setSortStateDirty();
+        
     } else 
     alert ('Unable to add new row; check to make sure the form is filled out.');
 }

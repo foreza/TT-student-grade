@@ -1,4 +1,5 @@
-let sortNameState = 0;          // Keep track of the current sort view state
+let sortNameState = 0;          // Keep track of the current sort name view state
+let sortGradeState = 0;         // Keep track of the current sort grade view state
 
 
 // Function that will access the table body, and iterate/remove all nodes
@@ -15,13 +16,15 @@ function clearViewTable(){
 function setSortStateDirty(){
        // Set the caret to a 'dirty' value to indicate it can be resorted
        document.querySelector("#nameSortStateCaret").textContent = "*"
+       document.querySelector("#gradeSortStateCaret").textContent = "*"
+
 }
 
 
 // Function invoked by clicking the header for name 
 // This will toggle the sortNameState and call the appropriate sort
-// TODO: Rename this function and refactor more
-function changeSortViewStateAndSort(){
+// TODO: refactor more
+function changeSortViewNameStateAndSort(){
 
     if (sortNameState === 0) {
         sortStudentCollectionByNameDescending();
@@ -34,6 +37,22 @@ function changeSortViewStateAndSort(){
 
 }
 
+// Function invoked by clicking the header for name 
+// This will toggle the sortGradeState and call the appropriate sort
+function changeSortViewGradeStateAndSort(){
+
+    if (sortGradeState === 0) {
+        sortStudentCollectionByGradeDescending();
+        sortGradeState = 1;
+        return;
+    } if (sortGradeState === 1) {
+        sortStudentCollectionByGradeAscending();
+        sortGradeState = 0;
+    }
+
+
+
+}
 
 // Function that will sort by name descending.
 // TODO: Refactor to split view / make this file independent
@@ -47,7 +66,7 @@ function sortStudentCollectionByNameDescending(){
     renderStudentGradeTable(students);
 
     // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").textContent = "(desc)"
+    document.querySelector("#nameSortStateCaret").innerHTML = '&#9660;'
 
 
 
@@ -64,7 +83,7 @@ function sortStudentCollectionByNameAscending(){
     renderStudentGradeTable(students);
     
     // TODO: Toggle the view carat
-    document.querySelector("#nameSortStateCaret").textContent = "(asc)"
+    document.querySelector("#nameSortStateCaret").innerHTML = '&#9650;';
 
 
 
@@ -94,5 +113,51 @@ function compareStudentNameDesc(a, b){
 
     }
 
+}
+
+
+    // Function that will sort by name descending.
+// TODO: Refactor to split view / make this file independent
+function sortStudentCollectionByGradeDescending(){
+
+    // Sort the data
+    students.sort(compareStudentGradeDesc);
+
+    // Re-render student table
+    clearViewTable();
+    renderStudentGradeTable(students);
+
+    // TODO: Toggle the view carat
+    document.querySelector("#gradeSortStateCaret").innerHTML = '&#9660;'
+
 
 }
+
+
+function sortStudentCollectionByGradeAscending(){
+
+      // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
+      students.sort(compareStudentGradeDesc).reverse();
+      clearViewTable();
+      renderStudentGradeTable(students);
+      
+      // TODO: Toggle the view carat
+      document.querySelector("#gradeSortStateCaret").innerHTML = '&#9650;';
+
+
+
+}
+
+
+    function compareStudentGradeDesc(a, b){
+
+        const gradeA = parseInt(a.grade);
+        const gradeB = parseInt(b.grade);
+
+        if (gradeA > gradeB) { 
+            return -1; 
+        } if (gradeA < gradeB) {
+            return 1;
+        } return 0;
+
+    }
