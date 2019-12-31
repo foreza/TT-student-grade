@@ -6,35 +6,19 @@ const upCaret = '&and;';
 const downCaret = '&or;';
 
 
-function view_setNameSortStateCaretDown() {
-    document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
+function sv_getSortNameState(){
+    return sortNameState;
 }
 
-function view_setNameSortStateCaretUp() {
-    document.querySelector("#nameSortStateCaret").innerHTML = upCaret;
-}
-
-function view_setGradeSortStateCaretDown() {
-    document.querySelector("#gradeSortStateCaret").innerHTML = downCaret;
-}
-
-function view_setGradeSortStateCaretUp() {
-    document.querySelector("#gradeSortStateCaret").innerHTML = upCaret;
-}
-
-
-// Set the caret to a 'dirty' value to indicate it can be resorted
-function setSortStateDirty() {
-    document.querySelector("#nameSortStateCaret").textContent = "*"
-    document.querySelector("#gradeSortStateCaret").textContent = "*"
-
+function sv_getSortGradeState(){
+    return sortGradeState;
 }
 
 
 // Function invoked by clicking the header for name 
 // This will toggle the sortNameState and call the appropriate sort
 // TODO: refactor more
-function changeSortViewNameStateAndSort(studentArr) {
+function sv_changeSortViewNameStateAndSort(studentArr) {
 
     if (sortNameState === 0) {
         sortStudentCollectionByNameDescending(studentArr);
@@ -50,7 +34,7 @@ function changeSortViewNameStateAndSort(studentArr) {
 
 // Function invoked by clicking the header for name 
 // This will toggle the sortGradeState and call the appropriate sort
-function changeSortViewGradeStateAndSort(studentArr) {
+function sv_changeSortViewGradeStateAndSort(studentArr) {
 
     if (sortGradeState === 0) {
         sortStudentCollectionByGradeDescending(studentArr);
@@ -121,9 +105,6 @@ function sortStudentCollectionByGradeDescending(studentArr) {
 
     // Sort the data
     studentArr.sort(compareStudentGradeDesc);
-
-    view_setGradeSortStateCaretDown();
-
 }
 
 
@@ -131,9 +112,6 @@ function sortStudentCollectionByGradeAscending(studentArr) {
 
     // Sort them descending, then reverse the array (TODO: Should we just write a 'compareNameAsc?' func)
     studentArr.sort(compareStudentGradeDesc).reverse();
-
-    view_setGradeSortStateCaretUp();
-
 }
 
 

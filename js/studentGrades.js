@@ -121,7 +121,48 @@ function view_clearFooterInputForm(){
 }
 
 
+function view_toggleNameSortStateCaret(state){
+    if (state === 0){
+        view_setNameSortStateCaretDown();
+    }
+    if (state === 1){
+        view_setNameSortStateCaretUp();
+    }
+}
 
+function view_toggleGradeSortStateCaret(state){
+    if (state === 0){
+        view_setGradeSortStateCaretDown();
+    }
+    if (state === 1){
+        view_setGradeSortStateCaretUp();
+    }
+}
+
+
+
+function view_setNameSortStateCaretDown() {
+    document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
+}
+
+function view_setNameSortStateCaretUp() {
+    document.querySelector("#nameSortStateCaret").innerHTML = upCaret;
+}
+
+function view_setGradeSortStateCaretDown() {
+    document.querySelector("#gradeSortStateCaret").innerHTML = downCaret;
+}
+
+function view_setGradeSortStateCaretUp() {
+    document.querySelector("#gradeSortStateCaret").innerHTML = upCaret;
+}
+
+// Set the caret to a 'dirty' value to indicate it can be resorted
+function view_setSortStateDirty() {
+    document.querySelector("#nameSortStateCaret").textContent = "*"
+    document.querySelector("#gradeSortStateCaret").textContent = "*"
+
+}
 
 
 
@@ -142,7 +183,7 @@ function click_attemptAddNewRow(){
         model_addNewStudent(newStudent);
         view_updateViewWithNewStudent(newStudent);
         view_clearFooterInputForm();
-        setSortStateDirty();
+        view_setSortStateDirty();
         
     } else 
     alert ('Unable to add new row; check to make sure the form is filled out.');
@@ -158,16 +199,18 @@ function click_deleteRowWithStudentID(id){
 
 // [ON-CLICK] Function called by index when the header for name sort is clicked
 function click_sortTableByName(){
-    changeSortViewNameStateAndSort(students); // Pass this by reference
+    sv_changeSortViewNameStateAndSort(students); // Pass this by reference
     view_clearViewTable();
+    view_toggleNameSortStateCaret(sv_getSortNameState());
     view_renderStudentGradeTable(students);
 }
 
 
 // [ON-CLICK] Function called by index when the header for name sort is clicked
 function click_sortTableByGrade(){
-    changeSortViewGradeStateAndSort(students);  // Pass this by reference
+    sv_changeSortViewGradeStateAndSort(students);  // Pass this by reference
     view_clearViewTable();
+    view_toggleGradeSortStateCaret(sv_getSortGradeState());
     view_renderStudentGradeTable(students);
 }
 
@@ -205,7 +248,7 @@ function updateRowWithStudentID(id){
             view_updateViewWithModifiedStudent(theStudent, id);
 
             // Indicate that we may resort the data.
-            setSortStateDirty();
+            view_setSortStateDirty();
 
 
             // Handle the edit view
