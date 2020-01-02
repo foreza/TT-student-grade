@@ -20,8 +20,6 @@ var uniqueIDPrefix;
 $(document).ready(function () {
 
     initializeViewConstants();
-
-
     view_renderStudentGradeTable(students);
 
 });
@@ -36,11 +34,13 @@ function initializeViewConstants() {
     students = model_getAllStudentData();       // Add remote data to initial local view
 
     // Maintain reference to the tBody 
-    tbody = document.querySelector('#table-grades tbody');
+    tbody = $("#table-grades tbody");
 
     // Maintain reference to the input form 
     tFooterNameInput = document.querySelector('#input-name');
+    // tFooterNameInput = $("#input-name");
     tFooterGradeInput = document.querySelector('#input-grade');
+    // tFooterGradeInput = $("#input-grade");
 
     // ID uniqueifier
     startingID = students.length;   // Set this to the input length for now and increment this
@@ -123,29 +123,28 @@ function model_deleteStudent(id) {
 function view_renderStudentGradeTable(studentGradeList) {
 
     studentGradeList.forEach(student => {
-        tbody.appendChild(util_returnCreatedRowItemForStudent(student));
+        tbody.append(util_returnCreatedRowItemForStudent(student));
+        console.log(util_returnCreatedRowItemForStudent(student));
     });
 
 }
 
 // Function that will access the table body, and iterate/remove all nodes
 function view_clearViewTable() {
-
-    while (tbody.children.length > 0) {
-        tbody.lastChild.remove();
-    }
+    tbody.empty();
 
 }
 
 // Update the view given a student object
 function view_updateViewWithNewStudent(studentObj) {
-    tbody.appendChild(util_returnCreatedRowItemForStudent(studentObj));
+    tbody.append(util_returnCreatedRowItemForStudent(studentObj));
 }
 
 
 // Delete student from view given an id
 function view_deleteStudentFromView(id) {
-    document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
+    // document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
+    $(`#${uniqueIDPrefix}${id}`).remove();
 }
 
 
@@ -440,7 +439,7 @@ function util_returnCreatedRowItemForStudent(student) {
     onHoverShow.setAttribute('class', 'on-hover-show');
 
     const dropDownButton = document.createElement('button');
-    dropDownButton.textContent = "...";
+    dropDownButton.textContent = "Menu";
 
     const dropDownContent = document.createElement('div');
     dropDownContent.setAttribute('class', 'dropdown-content');
