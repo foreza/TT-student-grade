@@ -124,12 +124,11 @@ function view_renderStudentGradeTable(studentGradeList) {
 
     studentGradeList.forEach(student => {
         tbody.append(util_returnCreatedRowItemForStudent(student));
-        console.log(util_returnCreatedRowItemForStudent(student));
     });
 
 }
 
-// Function that will access the table body, and iterate/remove all nodes
+// Function that will access the table body
 function view_clearViewTable() {
     tbody.empty();
 
@@ -143,7 +142,6 @@ function view_updateViewWithNewStudent(studentObj) {
 
 // Delete student from view given an id
 function view_deleteStudentFromView(id) {
-    // document.querySelector(`#${uniqueIDPrefix}${id}`).remove();
     $(`#${uniqueIDPrefix}${id}`).remove();
 }
 
@@ -151,16 +149,15 @@ function view_deleteStudentFromView(id) {
 // Update the row for a student given the id and student object
 function view_updateViewWithModifiedStudent(studentObj, id) {
 
-    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
-    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
-
-    nameColItem.children[0].innerHTML = studentObj.name;
-    gradeColItem.children[0].innerHTML = studentObj.grade;
+    $(`#${uniqueIDPrefix}name${id} span`).text(studentObj.name);
+    $(`#${uniqueIDPrefix}grade${id} span`).text(studentObj.grade);
 }
 
 
 // Clear the bottom input form
 function view_clearFooterInputForm() {
+
+    // TODO: ??
     tFooterNameInput.value = "";
     tFooterGradeInput.value = 0;
 }
@@ -185,7 +182,7 @@ function view_toggleGradeSortStateCaret(state) {
 }
 
 
-
+// TODO: use jquery
 function view_setNameSortStateCaretDown() {
     document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
 }
@@ -277,13 +274,10 @@ function updateRowWithStudentID(id) {
     if (isValidInputForEditOfID(id)) {
 
         // Get the dom
-        const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
-        const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
-
         let theStudent = {
             id: id,    // TODO: How are we assigning IDs?
-            name: nameColItem.children[1].value,
-            grade: parseInt(gradeColItem.children[1].value)
+            name: $(`#${uniqueIDPrefix}input-name${id}`).val(),
+            grade: parseInt($(`#${uniqueIDPrefix}input-grade${id}`).val())
         }
 
         // Update the data model (todo: do validation here)
@@ -324,17 +318,15 @@ function cancelActionWithStudentID(id) {
 // Enables editing for the specific name field
 function enableEditingNameViewForStudentID(id) {
 
-    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
+    // Hide the specific table cell
+    $(`#${uniqueIDPrefix}name${id} span`).attr('class', 'edit-content-hidden');
 
-    // Hide the existing value
-    const nameColItemVal = nameColItem.children[0];
-    nameColItemVal.setAttribute('class', 'edit-content-hidden');
+    const inputForName = $('<input></input>')
+        .attr('id', `${uniqueIDPrefix}input-name${id}`)
+        .attr('type', "text")
+        .attr('value', $(`#${uniqueIDPrefix}name${id} span`).text());
 
-    // Create an input with the existing value as placeholder
-    const inputForName = document.createElement('input')
-    inputForName.setAttribute('type', "text");
-    inputForName.setAttribute('value', nameColItemVal.innerHTML);
-    nameColItem.appendChild(inputForName);
+    $(`#${uniqueIDPrefix}name${id}`).append(inputForName);
 
 }
 
@@ -342,15 +334,11 @@ function enableEditingNameViewForStudentID(id) {
 // Disables editing for the specific name field
 function disableEditingNameViewForStudentID(id) {
 
-    const nameColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0];
-
-    // Show the value
-    const nameColItemVal = nameColItem.children[0];
-    nameColItemVal.removeAttribute('class', 'edit-content-hidden');
+    // Show the specific table cell
+    $(`#${uniqueIDPrefix}name${id} span`).removeAttr('class', 'edit-content-hidden');
 
     // Access and destroy the input
-    const nameColItemInput = nameColItem.children[1];
-    nameColItemInput.remove();
+    $(`#${uniqueIDPrefix}input-name${id}`).remove();
 
 
 }
@@ -359,141 +347,121 @@ function disableEditingNameViewForStudentID(id) {
 // Enables editing for the specific grade field
 function enableEditingGradeViewForStudentID(id) {
 
-    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
 
-    // Hide the existing value
-    const gradeColItemVal = gradeColItem.children[0];
-    gradeColItemVal.setAttribute('class', 'edit-content-hidden');
+      // Hide the specific table cell
+      $(`#${uniqueIDPrefix}grade${id} span`).attr('class', 'edit-content-hidden');
 
-    // Create an input with the existing value as placeholder
-    const inputForGrade = document.createElement('input')
-    inputForGrade.setAttribute('type', "number");
-    inputForGrade.setAttribute('min', 0);
-    inputForGrade.setAttribute('max', 100);
-    inputForGrade.setAttribute('value', gradeColItemVal.innerHTML);
-    gradeColItem.appendChild(inputForGrade);
-
+      const inputForGrade = $('<input></input>')
+          .attr('id', `${uniqueIDPrefix}input-grade${id}`)
+          .attr('type', "number")
+          .attr('min', 0)
+          .attr('max', 100)
+          .attr('value', $(`#${uniqueIDPrefix}grade${id} span`).text());
+  
+      $(`#${uniqueIDPrefix}grade${id}`).append(inputForGrade);
 }
 
 
 // Disables editing for the specific grade field
 function disableEditingGradeViewForStudentID(id) {
 
-    const gradeColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1];
+     // Show the specific table cell
+     $(`#${uniqueIDPrefix}grade${id} span`).removeAttr('class', 'edit-content-hidden');
 
-    // Show the value
-    const gradeColItemVal = gradeColItem.children[0];
-    gradeColItemVal.removeAttribute('class', 'edit-content-hidden');
-
-    // Access and destroy the input
-    const gradeColItemInput = gradeColItem.children[1];
-    gradeColItemInput.remove();
+     // Access and destroy the input
+     $(`#${uniqueIDPrefix}input-grade${id}`).remove();
 
 }
 
 
 // Enables editing for the specific option id
 function enableEditingOptionViewForStudentID(id) {
-    const optionsColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[2];
-    // Hide the options button
-    optionsColItem.children[0].children[0].setAttribute('class', 'edit-content-hidden');
-    // Show the edit links
-    optionsColItem.children[1].children[0].setAttribute('class', 'is-editable');
+
+    // Hide options button
+    $(`#${uniqueIDPrefix}options${id} .on-hover-show button`).attr('class', 'edit-content-hidden');
+
+    // Show edit links
+    $(`#${uniqueIDPrefix}options${id} .on-edit-show div` ).attr('class', 'is-editable');
+
+
 }
 
 
 // Disables editing for the specific option id
 function disableEditingOptionViewForStudentID(id) {
-    const optionsColItem = document.querySelector(`#${uniqueIDPrefix}${id}`).children[2];
 
-    // Hide the edit links
-    optionsColItem.children[1].children[0].removeAttribute('class', 'is-editable');
-    optionsColItem.children[1].children[0].setAttribute('class', 'edit-content-hidden');
+    // Hide edit links
+    $(`#${uniqueIDPrefix}options${id} .on-edit-show div` )
+    .removeAttr('class', 'is-editable')
+    .attr('class', 'edit-content-hidden');
 
     // Show the options button
-    optionsColItem.children[0].children[0].removeAttribute('class', 'is-editable');
+    $(`#${uniqueIDPrefix}options${id} .on-hover-show button`).removeAttr('class', 'edit-content-hidden');
+
 }
+
 
 
 // Helper function that returns a new row object
 // TODO: Break this up into smaller functions
 function util_returnCreatedRowItemForStudent(student) {
 
-    const row = document.createElement('tr');
+    const row = $('<tr></tr>');
 
-    const colName = document.createElement('td');
-    const colGrade = document.createElement('td');
-    const colOptions = document.createElement('td');
+    const colName = $('<td></td>').attr('id', `${uniqueIDPrefix}name${student.id}`);
+    const colGrade = $('<td></td>').attr('id', `${uniqueIDPrefix}grade${student.id}`);
+    const colOptions = $('<td></td>').attr('id', `${uniqueIDPrefix}options${student.id}`);
 
+    const colNameContent = $('<span></span>').text(student.name);
+    colName.append(colNameContent);
 
-    const colNameContent = document.createElement('span');
-    colNameContent.textContent = student.name;
-    colName.appendChild(colNameContent);
+    const colGradeContent = $('<span></span>').text(student.grade);
+    colGrade.append(colGradeContent);
 
-    const colGradeContent = document.createElement('span');
-    colGradeContent.textContent = student.grade;
-    colGrade.appendChild(colGradeContent);
+    const onHoverShow = $('<div></div>').attr('class', 'on-hover-show');
 
-    // On Hover show button and links
-    const onHoverShow = document.createElement('div');
-    onHoverShow.setAttribute('class', 'on-hover-show');
+    const dropDownButton = $('<button></button>').text("Menu");
 
-    const dropDownButton = document.createElement('button');
-    dropDownButton.textContent = "Menu";
+    const dropDownContent = $('<div></div>').attr('class', 'dropdown-content');
 
-    const dropDownContent = document.createElement('div');
-    dropDownContent.setAttribute('class', 'dropdown-content');
-
-    const editLink = document.createElement('a');
-    const deleteLink = document.createElement('a');
-
-    editLink.setAttribute('href', "#");
-    deleteLink.setAttribute('href', "#");
-    editLink.setAttribute('onclick', `click_editActionWithStudentID(${student.id})`);
-    deleteLink.setAttribute('onclick', `click_deleteRowWithStudentID(${student.id})`);
-
-    editLink.textContent = 'Edit';
-    deleteLink.textContent = 'Delete';
-
-    dropDownContent.appendChild(editLink);
-    dropDownContent.appendChild(deleteLink);
-
-    onHoverShow.appendChild(dropDownButton);
-    onHoverShow.appendChild(dropDownContent);
-
-    // On edit show content and links
-    const onEditShow = document.createElement('div');
-    onEditShow.setAttribute('class', 'on-edit-show');
-
-    const editContentLinks = document.createElement('div');
-    editContentLinks.setAttribute('class', 'edit-content-hidden');
-
-    const saveLink = document.createElement('a');
-    const cancelLink = document.createElement('a');
+    const editLink = $('<a></a>')
+        .text('Edit')
+        .attr('href', '#')
+        .attr('onclick', `click_editActionWithStudentID(${student.id})`);
+    
+    const deleteLink = $('<a></a>')
+        .text('Delete')
+        .attr('href', '#')
+        .attr('onclick', `click_deleteRowWithStudentID(${student.id})`);
 
 
-    saveLink.setAttribute('href', "#");
-    cancelLink.setAttribute('href', "#");
-    saveLink.setAttribute('onclick', `updateRowWithStudentID(${student.id})`);
-    cancelLink.setAttribute('onclick', `cancelActionWithStudentID(${student.id})`);
+    dropDownContent.append(editLink, deleteLink);
+    onHoverShow.append(dropDownButton, dropDownContent);
 
-    saveLink.textContent = 'Save';
-    cancelLink.textContent = 'Cancel';
+    const onEditShow = $('<div></div>').attr('class', 'on-edit-show');
+
+    const editContentLinks = $('<div></div>').attr('class','edit-content-hidden');
+
+    const saveLink = $('<a></a>')
+        .text('Save')
+        .attr('href', '#')
+        .attr('onclick', `updateRowWithStudentID(${student.id})`);
+
+    const cancelLink = $('<a></a>')
+        .text('Cancel')
+        .attr('href', '#')
+        .attr('onclick', `cancelActionWithStudentID(${student.id})`);
 
 
-    editContentLinks.appendChild(saveLink);
-    editContentLinks.appendChild(cancelLink);
 
-    onEditShow.appendChild(editContentLinks);
+    editContentLinks.append(saveLink, cancelLink);
 
+    onEditShow.append(editContentLinks);
 
-    colOptions.appendChild(onHoverShow);
-    colOptions.appendChild(onEditShow);
+    colOptions.append(onHoverShow, onEditShow);
 
-    row.setAttribute('id', `${uniqueIDPrefix}${student.id}`);   // Use a configurable prefix
-    row.appendChild(colName);
-    row.appendChild(colGrade);
-    row.appendChild(colOptions);
+    row.attr('id', `${uniqueIDPrefix}${student.id}`);   // Use a configurable prefix
+    row.append(colName, colGrade, colOptions);
 
     return row;
 
