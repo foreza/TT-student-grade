@@ -1,20 +1,8 @@
-
-
-// Sample Array of student Grades
-var students = [];
-
-// id uniqueifier 
-var startingID = 0;
-
-// Maintain reference to the tBody 
-var tbody;
-
-// Maintain reference to the input form 
-var tFooterNameInput;
-var tFooterGradeInput;
+var students = [];                              // Student Grades Array
+var startingID = 0;                             // Student id uniqueifier (TODO: Replace)
+var tbody;                                      // Reference to the Table Body 
 
 var uniqueIDPrefix;
-
 
 
 $(document).ready(function () {
@@ -31,22 +19,10 @@ $(document).ready(function () {
 
 function initializeViewConstants() {
 
-    students = model_getAllStudentData();       // Add remote data to initial local view
-
-    // Maintain reference to the tBody 
-    tbody = $("#table-grades tbody");
-
-    // Maintain reference to the input form 
-    tFooterNameInput = document.querySelector('#input-name');
-    // tFooterNameInput = $("#input-name");
-    tFooterGradeInput = document.querySelector('#input-grade');
-    // tFooterGradeInput = $("#input-grade");
-
-    // ID uniqueifier
-    startingID = students.length;   // Set this to the input length for now and increment this
-
-    uniqueIDPrefix = "student-";
-    
+    tbody = $("#table-grades tbody");                   // Use jQuery to select the tBody (we'll use this alot)
+    students = model_getAllStudentData();               // Add remote data to initial local view
+    startingID = students.length;                       // TODO: Figure out a better way. Set this to the input length for now and increment this
+    uniqueIDPrefix = "student-";                        // TODO: Figure out a better way. Create some prefix. 
 
 }
 
@@ -76,20 +52,22 @@ function model_getAllStudentData() {
 
 }
 
+
 // CREATE: Add new student given a student object
 function model_addNewStudent(studentObj) {
     students.push(studentObj);      // Add it to the actual array
 }
 
+
 // UPDATE: Update an existing student in the local storage given the student object and id for lookup
 function model_updateExistingStudent(studentObj, id) {
 
     for (var i = 0; i < students.length; ++i) {
+
         // Loop until we find a matching ID
         if (id == students[i].id) {
             students[i].name = studentObj.name;
             students[i].grade = studentObj.grade;
-            alert('Found id for update')
             break;
         }
 
@@ -97,8 +75,10 @@ function model_updateExistingStudent(studentObj, id) {
 
 }
 
+
 // DELETE: Delete an existing student given an ID
 function model_deleteStudent(id) {
+
     // For removing from the data structure, we'll do brute force approach for now
     for (var i = 0; i < students.length; ++i) {
 
@@ -119,6 +99,7 @@ function model_deleteStudent(id) {
 
 // View Manipulation
 
+
 // Function to render grades 
 function view_renderStudentGradeTable(studentGradeList) {
 
@@ -128,11 +109,12 @@ function view_renderStudentGradeTable(studentGradeList) {
 
 }
 
+
 // Function that will access the table body
 function view_clearViewTable() {
     tbody.empty();
-
 }
+
 
 // Update the view given a student object
 function view_updateViewWithNewStudent(studentObj) {
@@ -154,57 +136,103 @@ function view_updateViewWithModifiedStudent(studentObj, id) {
 }
 
 
-// Clear the bottom input form
-function view_clearFooterInputForm() {
-
-    // TODO: ??
-    tFooterNameInput.value = "";
-    tFooterGradeInput.value = 0;
+// Get the input value for the name
+function view_GetFooterFormNameInputValue(){
+    return $("#input-name").val();
 }
 
 
+// Get the input value for the grade as an int 
+function view_GetFooterFormGradeInputValue(){
+    return parseInt($("#input-grade").val());
+}
+
+
+// Clear the bottom input form
+function view_clearFooterInputForm() {
+
+    $("#input-name").val("");
+    $("#input-grade").val("");
+
+}
+
+
+// Toggle the display state of NAME sort caret
 function view_toggleNameSortStateCaret(state) {
     if (state === 0) {
         view_setNameSortStateCaretDown();
-    }
-    if (state === 1) {
+    } else if (state === 1) {
         view_setNameSortStateCaretUp();
     }
 }
 
+
+// Toggle the display state of GRADE sort caret
 function view_toggleGradeSortStateCaret(state) {
     if (state === 0) {
         view_setGradeSortStateCaretDown();
-    }
-    if (state === 1) {
+    } else if (state === 1) {
         view_setGradeSortStateCaretUp();
     }
 }
 
 
-// TODO: use jquery
+// Set caret to a specific character for the sort NAME descending state
 function view_setNameSortStateCaretDown() {
-    document.querySelector("#nameSortStateCaret").innerHTML = downCaret;
+    $("#nameSortStateCaret").html(downCaret);
 }
 
+
+// Set caret to a specific character for the sort NAME ascending state
 function view_setNameSortStateCaretUp() {
-    document.querySelector("#nameSortStateCaret").innerHTML = upCaret;
+    $("#nameSortStateCaret").html(upCaret);
 }
 
+
+// Set caret to a specific character for the sort GRADE descending state
 function view_setGradeSortStateCaretDown() {
-    document.querySelector("#gradeSortStateCaret").innerHTML = downCaret;
+    $("#gradeSortStateCaret").html(downCaret);
 }
 
+
+// Set caret to a specific character for the sort GRADE ascending state
 function view_setGradeSortStateCaretUp() {
-    document.querySelector("#gradeSortStateCaret").innerHTML = upCaret;
+    $("#gradeSortStateCaret").html(upCaret);
 }
 
-// Set the caret to a 'dirty' value to indicate it can be resorted
+
+// Set both caret to 'dirty' value to indicate it can be resorted
 function view_setSortStateDirty() {
-    document.querySelector("#nameSortStateCaret").textContent = "*"
-    document.querySelector("#gradeSortStateCaret").textContent = "*"
+
+    $("#nameSortStateCaret").html(dirtyCaret);
+    $("#gradeSortStateCaret").html(dirtyCaret);
 
 }
+
+
+// Set name input form to 'error' state
+function view_setValidationErrorStateForNameInput() {
+    $("#input-name").attr('class', 'error');
+}
+
+
+// Set name input form to 'error' state
+function view_setValidationDefaultStateForNameInput() {
+    $("#input-name").removeAttr('class', 'error');
+}
+
+
+// Set grade input form to 'error' state
+function view_setValidationErrorStateForGradeInput() {
+    $("#input-grade").attr('class', 'error');
+}
+
+
+// Set name input form to 'error' state
+function view_setValidationDefaultStateForGradeInput() {
+    $("#input-grade").removeAttr('class', 'error');
+}
+
 
 
 
@@ -214,12 +242,18 @@ function view_setSortStateDirty() {
 // [ON-CLICK] Function called by index when the footer form is used
 function click_attemptAddNewRow() {
 
-    if (isValidInputForFooterForm()) {
+    // Get the form input
+    const formInput = {
+        name: view_GetFooterFormNameInputValue(),
+        grade: view_GetFooterFormGradeInputValue()
+    }
+
+    if (isValidInputForFooterForm(formInput)) {
 
         let newStudent = {
-            id: startingID++,    // TODO: How are we assigning IDs?
-            name: tFooterNameInput.value,
-            grade: parseInt(tFooterGradeInput.value)
+            id: startingID++,       // TODO: How are we assigning IDs?
+            name: formInput.name,
+            grade: formInput.grade
         }
 
         model_addNewStudent(newStudent);
@@ -241,36 +275,38 @@ function click_deleteRowWithStudentID(id) {
 
 // [ON-CLICK] Function called by index when the header for name sort is clicked
 function click_sortTableByName() {
+
     sv_changeSortViewNameStateAndSort(students); // Pass this by reference
     view_clearViewTable();
     view_toggleNameSortStateCaret(sv_getSortNameState());
     view_renderStudentGradeTable(students);
+
 }
 
 
 // [ON-CLICK] Function called by index when the header for name sort is clicked
 function click_sortTableByGrade() {
+
     sv_changeSortViewGradeStateAndSort(students);  // Pass this by reference
     view_clearViewTable();
     view_toggleGradeSortStateCaret(sv_getSortGradeState());
     view_renderStudentGradeTable(students);
+
 }
 
 
 // [ON-CLICK] Function called by the index for a specific id 
 function click_editActionWithStudentID(id) {
-    alert(`Begin editing: ${id}`);
 
     enableEditingNameViewForStudentID(id);
     enableEditingGradeViewForStudentID(id);
     enableEditingOptionViewForStudentID(id);
 
-
 }
 
 function updateRowWithStudentID(id) {
 
-    // Validate
+    // Validate id
     if (isValidInputForEditOfID(id)) {
 
         // Get the dom
@@ -289,7 +325,6 @@ function updateRowWithStudentID(id) {
         // Indicate that we may resort the data.
         view_setSortStateDirty();
 
-
         // Handle the edit view
         disableEditingNameViewForStudentID(id);
         disableEditingGradeViewForStudentID(id);
@@ -299,17 +334,17 @@ function updateRowWithStudentID(id) {
 
 }
 
-function cancelActionWithStudentID(id) {
-    alert(`Canceling Action for: ${id}`);
 
-    // Handle the edit view
+function cancelActionWithStudentID(id) {
+
     disableEditingNameViewForStudentID(id);
     disableEditingGradeViewForStudentID(id);
     disableEditingOptionViewForStudentID(id);
 
-
-
 }
+
+
+
 
 
 // Editing view functions
@@ -340,36 +375,35 @@ function disableEditingNameViewForStudentID(id) {
     // Access and destroy the input
     $(`#${uniqueIDPrefix}input-name${id}`).remove();
 
-
 }
 
 
 // Enables editing for the specific grade field
 function enableEditingGradeViewForStudentID(id) {
 
+    // Hide the specific table cell
+    $(`#${uniqueIDPrefix}grade${id} span`).attr('class', 'edit-content-hidden');
 
-      // Hide the specific table cell
-      $(`#${uniqueIDPrefix}grade${id} span`).attr('class', 'edit-content-hidden');
+    const inputForGrade = $('<input></input>')
+        .attr('id', `${uniqueIDPrefix}input-grade${id}`)
+        .attr('type', "number")
+        .attr('min', 0)
+        .attr('max', 100)
+        .attr('value', $(`#${uniqueIDPrefix}grade${id} span`).text());
 
-      const inputForGrade = $('<input></input>')
-          .attr('id', `${uniqueIDPrefix}input-grade${id}`)
-          .attr('type', "number")
-          .attr('min', 0)
-          .attr('max', 100)
-          .attr('value', $(`#${uniqueIDPrefix}grade${id} span`).text());
-  
-      $(`#${uniqueIDPrefix}grade${id}`).append(inputForGrade);
+    $(`#${uniqueIDPrefix}grade${id}`).append(inputForGrade);
+
 }
 
 
 // Disables editing for the specific grade field
 function disableEditingGradeViewForStudentID(id) {
 
-     // Show the specific table cell
-     $(`#${uniqueIDPrefix}grade${id} span`).removeAttr('class', 'edit-content-hidden');
+    // Show the specific table cell
+    $(`#${uniqueIDPrefix}grade${id} span`).removeAttr('class', 'edit-content-hidden');
 
-     // Access and destroy the input
-     $(`#${uniqueIDPrefix}input-grade${id}`).remove();
+    // Access and destroy the input
+    $(`#${uniqueIDPrefix}input-grade${id}`).remove();
 
 }
 
@@ -381,8 +415,7 @@ function enableEditingOptionViewForStudentID(id) {
     $(`#${uniqueIDPrefix}options${id} .on-hover-show button`).attr('class', 'edit-content-hidden');
 
     // Show edit links
-    $(`#${uniqueIDPrefix}options${id} .on-edit-show div` ).attr('class', 'is-editable');
-
+    $(`#${uniqueIDPrefix}options${id} .on-edit-show div`).attr('class', 'is-editable');
 
 }
 
@@ -391,9 +424,9 @@ function enableEditingOptionViewForStudentID(id) {
 function disableEditingOptionViewForStudentID(id) {
 
     // Hide edit links
-    $(`#${uniqueIDPrefix}options${id} .on-edit-show div` )
-    .removeAttr('class', 'is-editable')
-    .attr('class', 'edit-content-hidden');
+    $(`#${uniqueIDPrefix}options${id} .on-edit-show div`)
+        .removeAttr('class', 'is-editable')
+        .attr('class', 'edit-content-hidden');
 
     // Show the options button
     $(`#${uniqueIDPrefix}options${id} .on-hover-show button`).removeAttr('class', 'edit-content-hidden');
@@ -428,7 +461,7 @@ function util_returnCreatedRowItemForStudent(student) {
         .text('Edit')
         .attr('href', '#')
         .attr('onclick', `click_editActionWithStudentID(${student.id})`);
-    
+
     const deleteLink = $('<a></a>')
         .text('Delete')
         .attr('href', '#')
@@ -440,7 +473,7 @@ function util_returnCreatedRowItemForStudent(student) {
 
     const onEditShow = $('<div></div>').attr('class', 'on-edit-show');
 
-    const editContentLinks = $('<div></div>').attr('class','edit-content-hidden');
+    const editContentLinks = $('<div></div>').attr('class', 'edit-content-hidden');
 
     const saveLink = $('<a></a>')
         .text('Save')

@@ -4,6 +4,7 @@ let sortGradeState = 0;         // Keep track of the current sort grade view sta
 // TODO: Move all of the document query selection behaviors out of this file
 const upCaret = '&and;';
 const downCaret = '&or;';
+const dirtyCaret = '*';
 
 
 function sv_getSortNameState(){

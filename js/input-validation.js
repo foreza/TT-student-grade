@@ -1,13 +1,11 @@
-
 // Function called to validate the edit input
-// TODO: Refactor and place this function where it belongs
+// TODO: Refactor so that this doesn't control view
 function isValidInputForEditOfID(id){
 
     const nameColElement = document.querySelector(`#${uniqueIDPrefix}${id}`).children[0].children[1];
     const gradeColElement = document.querySelector(`#${uniqueIDPrefix}${id}`).children[1].children[1];
 
-
-     // Check name /grade input for footer and 
+     // Check name / grade input for footer form 
      if (validateNameInput(nameColElement) && validateGradeInput(gradeColElement)){
         return true;
     } else {
@@ -16,12 +14,12 @@ function isValidInputForEditOfID(id){
 
 }
 
+
 // Function called to validate for footer form input
-// TODO: Refactor and place this function where it belongs
-function isValidInputForFooterForm(){
+function isValidInputForFooterForm(input){
 
     // Check name / grade input for footer  
-    if (validateNameInput(tFooterNameInput) && validateGradeInput(tFooterGradeInput)){
+    if (validateNameInput(input.name) && validateGradeInput(input.grade)){
         return true;
     } else {
         return false;
@@ -31,29 +29,34 @@ function isValidInputForFooterForm(){
 
 
 // Basic Name validation function
-function validateNameInput(element){
+// TODO: Refactor so that this doesn't control view
+function validateNameInput(input){
     
     // Check to ensure the value is not empty
-    if (element.value != "") {
-        element.removeAttribute('class', 'error');
-        return true;
+    if (input == "") {
+        view_setValidationErrorStateForNameInput();
+        console.error("validateNameInput FAIL: ", input);
+        return false;
     } else {
-        element.setAttribute('class', 'error');
-        return false;   
+        view_setValidationDefaultStateForNameInput();
+        return true;   
     }
 
 }
 
+
 // Basic Grade validation function
-function validateGradeInput(element){
+// TODO: Refactor so that this doesn't control view
+function validateGradeInput(input){
 
     // TODO: Alert due to specific error?
-    if (element.value != "" && element.value >= 0 && element.value <= 100){
-        element.removeAttribute('class', 'error');
-        return true; 
-    } else {
-        element.setAttribute('class', 'error');
+    if (isNaN(input) || input < 0 || input > 100){
+        view_setValidationErrorStateForGradeInput();
+        console.error("validateGradeInput FAIL: ", input);
         return false;
+    } else {
+        view_setValidationDefaultStateForGradeInput();          
+        return true;
     }
 
 }
