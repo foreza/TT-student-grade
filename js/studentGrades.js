@@ -84,10 +84,7 @@ function model_deleteStudent(id) {
 
         // Loop until we find a matching ID
         if (id == students[i].id) {
-
             students.splice(i, 1);
-            alert('Found id for deletion')
-
             break;
         }
 
@@ -159,6 +156,9 @@ function view_clearFooterInputForm() {
 
 // Toggle the display state of NAME sort caret
 function view_toggleNameSortStateCaret(state) {
+
+    view_setSortStateDirty();               // Reset sort state indicators
+
     if (state === 0) {
         view_setNameSortStateCaretDown();
     } else if (state === 1) {
@@ -169,6 +169,9 @@ function view_toggleNameSortStateCaret(state) {
 
 // Toggle the display state of GRADE sort caret
 function view_toggleGradeSortStateCaret(state) {
+
+    view_setSortStateDirty();               // Reset sort state indicators
+
     if (state === 0) {
         view_setGradeSortStateCaretDown();
     } else if (state === 1) {
@@ -216,7 +219,7 @@ function view_setValidationErrorStateForNameInput() {
 }
 
 
-// Set name input form to 'error' state
+// Set name input form to 'default' state
 function view_setValidationDefaultStateForNameInput() {
     $("#input-name").removeAttr('class', 'error');
 }
@@ -228,10 +231,46 @@ function view_setValidationErrorStateForGradeInput() {
 }
 
 
-// Set name input form to 'error' state
+// Set name input form to 'default' state
 function view_setValidationDefaultStateForGradeInput() {
     $("#input-grade").removeAttr('class', 'error');
 }
+
+// Retrieve name input for a specific name
+function view_getNameInputForId(id){
+    return $(`#${uniqueIDPrefix}input-name${id}`).val();
+}
+
+
+// Retrieve grade input for a specific id
+function view_getGradeInputForId(id){
+    return $(`#${uniqueIDPrefix}input-grade${id}`).val();
+}
+
+
+// Set name update to 'error' state
+function view_setValidationErrorStateForNameUpdate(id) {
+    $(`#${uniqueIDPrefix}input-name${id}`).attr('class', 'error');
+}
+
+
+// Set name update to 'default' state
+function view_setValidationDefaultStateForGradeUpdate(id) {
+    $(`#${uniqueIDPrefix}input-grade${id}`).removeAttr('class', 'error');
+}
+
+
+// Set grade update to 'error' state
+function view_setValidationErrorStateForGradeUpdate(id) {
+    $(`#${uniqueIDPrefix}input-grade${id}`).attr('class', 'error');
+}
+
+// Set grade update to 'default' state
+function view_setValidationDefaultStateForNameUpdate(id){
+    $(`#${uniqueIDPrefix}input-name${id}`).removeAttr('class', 'error');
+}
+
+
 
 
 
@@ -248,7 +287,7 @@ function click_attemptAddNewRow() {
         grade: view_GetFooterFormGradeInputValue()
     }
 
-    if (isValidInputForFooterForm(formInput)) {
+    if (iv_isValidInputForFooterForm(formInput)) {
 
         let newStudent = {
             id: startingID++,       // TODO: How are we assigning IDs?
@@ -307,7 +346,7 @@ function click_editActionWithStudentID(id) {
 function updateRowWithStudentID(id) {
 
     // Validate id
-    if (isValidInputForEditOfID(id)) {
+    if (iv_isValidInputForEditOfID(id)) {
 
         // Get the dom
         let theStudent = {
