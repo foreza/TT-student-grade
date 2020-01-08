@@ -39,21 +39,23 @@
     padding: 1em;
 }
 
-#darkModeToggle {
-    margin: 0 auto;
+.header-button-select {
+    margin: 10px auto;
     border: 1px solid #000000;
     display: block;
     font-size: 1.5em;
     height: 1.2em;
     padding-left: 1em;
     padding-right: 1em;
+    
 }
 
-#darkModeToggle:active{
+/* TODO: fix this */
+/* .header-button-select:active{
     color: #ffffff;
     margin-top: 2px;
     background: #000000;
-}
+} */
 
 /* Main content styles */
 

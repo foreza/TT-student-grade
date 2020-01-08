@@ -5,22 +5,36 @@ var tbody;                                      // Reference to the Table Body
 var uniqueIDPrefix;
 
 // Local storage (temporary)
-var studentLocalStorage = window.localStorage;
+const studentLocalStorage = window.localStorage;
 const studentStorageKeyName = "studentGradeCollection";
 const storageEnabled = true;
 
+// Sample AJAX call (temporary)
+const sampleAPIURL = "https://randomuser.me/api/?results=15"
 
 $(document).ready(function () {
 
     initializeViewConstants();
     view_renderStudentGradeTable(students);
 
+    // Test event on-click bindings for testing local storage and API calls:
+    $("#addSampleData").bind({
+        click: function () {
+            test_fetchRemoteSampleData(function(data) {
+                model_addNewStudentCollection(data);
+                view_renderStudentGradeTable(students);
+            });  
+        }
+      });
 
+      $("#removeAllData").bind({
+        click: function () {
+            model_deleteAllStudents();                      // Toggle the value
+            view_clearViewTable();
+        }
+      });
 
 });
-
-
-
 
 
 
@@ -39,13 +53,43 @@ function initializeViewConstants() {
 
 // Method to retrieve student data from storage
 function storage_retrieveStudentData() {
-    return JSON.parse(studentLocalStorage.getItem(studentStorageKeyName))
+
+    data = studentLocalStorage.getItem(studentStorageKeyName);
+    return data != null ? JSON.parse(data) : [];
 }
 
 
 // Method to write student data to storage
 function storage_writeStudentData() {
     studentLocalStorage.setItem(studentStorageKeyName, JSON.stringify(students));
+}
+
+
+// Method to clean the storage
+function storage_removeAllStudentData(){
+    studentLocalStorage.removeItem(studentStorageKeyName);
+}
+
+
+// Method to get sample test data, takes in a function as param to call after success
+function test_fetchRemoteSampleData(updateThenRenderFunc){
+
+    // shorthand implementation
+        $.get( sampleAPIURL, function( data ) {
+
+            const resultData = data.results;
+            const newStudentsData = resultData.map( student => {
+                return {
+                    id: startingID++,                       // TODO: Make this guranteed unique 
+                    name: student.name.first, 
+                    grade: student.dob.age 
+                };
+            })
+            
+            updateThenRenderFunc(newStudentsData);
+
+        });
+    
 }
 
 
@@ -68,6 +112,7 @@ function test_returnMockData() {
     return localCollection;
 }
 
+
 // Data Model Manipulation
 
 
@@ -83,12 +128,27 @@ function model_getAllStudentData() {
 
 // CREATE: Add new student given a student object
 function model_addNewStudent(studentObj) {
+    
     students.push(studentObj);      // Add it to the actual array
 
     // Write this to local storage if enabled
     if (storageEnabled) {
         storage_writeStudentData();
     }
+
+}
+
+
+// CREATE: Add a collection of new students
+function model_addNewStudentCollection(studentCollection) {
+    
+    students = students.concat(studentCollection);      // Add it to the actual array
+
+    // Write this to local storage if enabled
+    if (storageEnabled) {
+        storage_writeStudentData();
+    }
+
 }
 
 
@@ -136,6 +196,19 @@ function model_deleteStudent(id) {
 }
 
 
+// DELETE: Set the students collection to an empty array
+function model_deleteAllStudents() {
+
+    students = [];
+
+    // Write this to local storage if enabled
+    if (storageEnabled) {
+        storage_removeAllStudentData();
+     }
+
+}
+
+
 
 
 // View Manipulation
@@ -144,10 +217,13 @@ function model_deleteStudent(id) {
 // Function to render grades 
 function view_renderStudentGradeTable(studentGradeList) {
 
-    studentGradeList.forEach(student => {
-        tbody.append(util_returnCreatedRowItemForStudent(student));
-    });
+    if (studentGradeList.length > 0){
+        studentGradeList.forEach(student => {
+            tbody.append(util_returnCreatedRowItemForStudent(student));
+        });
+    }
 
+   
 }
 
 
