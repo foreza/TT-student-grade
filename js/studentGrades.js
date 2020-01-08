@@ -4,11 +4,18 @@ var tbody;                                      // Reference to the Table Body
 
 var uniqueIDPrefix;
 
+// Local storage (temporary)
+var studentLocalStorage = window.localStorage;
+const studentStorageKeyName = "studentGradeCollection";
+const storageEnabled = true;
+
 
 $(document).ready(function () {
 
     initializeViewConstants();
     view_renderStudentGradeTable(students);
+
+
 
 });
 
@@ -27,13 +34,23 @@ function initializeViewConstants() {
 }
 
 
+// Local storage methods
 
 
+// Method to retrieve student data from storage
+function storage_retrieveStudentData() {
+    return JSON.parse(studentLocalStorage.getItem(studentStorageKeyName))
+}
 
-// Data Model Manipulation
 
-// GET: Get all students
-function model_getAllStudentData() {
+// Method to write student data to storage
+function storage_writeStudentData() {
+    studentLocalStorage.setItem(studentStorageKeyName, JSON.stringify(students));
+}
+
+
+// TEST: Use this to generate a sample data set if there's nothing in local storage
+function test_returnMockData() {
 
     // Sample Array of student Grades
     let localCollection = [
@@ -49,6 +66,17 @@ function model_getAllStudentData() {
     ];
 
     return localCollection;
+}
+
+// Data Model Manipulation
+
+
+// GET: Get all students
+function model_getAllStudentData() {
+
+    return storage_retrieveStudentData();
+    // return test_returnMockData();
+    // return [];
 
 }
 
@@ -56,6 +84,11 @@ function model_getAllStudentData() {
 // CREATE: Add new student given a student object
 function model_addNewStudent(studentObj) {
     students.push(studentObj);      // Add it to the actual array
+
+    // Write this to local storage if enabled
+    if (storageEnabled) {
+        storage_writeStudentData();
+    }
 }
 
 
@@ -71,6 +104,11 @@ function model_updateExistingStudent(studentObj, id) {
             break;
         }
 
+    }
+
+    // Write this to local storage if enabled
+    if (storageEnabled) {
+        storage_writeStudentData();
     }
 
 }
@@ -89,6 +127,12 @@ function model_deleteStudent(id) {
         }
 
     }
+
+    // Write this to local storage if enabled
+    if (storageEnabled) {
+        storage_writeStudentData();
+    }
+
 }
 
 
@@ -134,13 +178,13 @@ function view_updateViewWithModifiedStudent(studentObj, id) {
 
 
 // Get the input value for the name
-function view_GetFooterFormNameInputValue(){
+function view_GetFooterFormNameInputValue() {
     return $("#input-name").val();
 }
 
 
 // Get the input value for the grade as an int 
-function view_GetFooterFormGradeInputValue(){
+function view_GetFooterFormGradeInputValue() {
     return parseInt($("#input-grade").val());
 }
 
@@ -237,13 +281,13 @@ function view_setValidationDefaultStateForGradeInput() {
 }
 
 // Retrieve name input for a specific name
-function view_getNameInputForId(id){
+function view_getNameInputForId(id) {
     return $(`#${uniqueIDPrefix}input-name${id}`).val();
 }
 
 
 // Retrieve grade input for a specific id
-function view_getGradeInputForId(id){
+function view_getGradeInputForId(id) {
     return $(`#${uniqueIDPrefix}input-grade${id}`).val();
 }
 
@@ -266,7 +310,7 @@ function view_setValidationErrorStateForGradeUpdate(id) {
 }
 
 // Set grade update to 'default' state
-function view_setValidationDefaultStateForNameUpdate(id){
+function view_setValidationDefaultStateForNameUpdate(id) {
     $(`#${uniqueIDPrefix}input-name${id}`).removeAttr('class', 'error');
 }
 
