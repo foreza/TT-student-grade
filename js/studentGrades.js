@@ -10,7 +10,7 @@ const studentStorageKeyName = "studentGradeCollection";
 const storageEnabled = true;
 
 // Sample AJAX call (temporary)
-const sampleAPIURL = "https://randomuser.me/api/?results=15"
+const sampleAPIURL = "https://randomuser.me/api/?results=10"
 
 $(document).ready(function () {
 
@@ -20,10 +20,11 @@ $(document).ready(function () {
     // Test event on-click bindings for testing local storage and API calls:
     $("#addSampleData").bind({
         click: function () {
-            test_fetchRemoteSampleData(function(data) {
-                model_addNewStudentCollection(data);
-                view_renderStudentGradeTable(students);
-            });  
+
+            test_fetchRemoteSampleDataAsPromise().then(data => {
+                model_addNewStudentCollection(data);            // update the model
+                view_renderStudentGradeTable(students);         // re-render the table
+            })
         }
       });
 
@@ -72,23 +73,35 @@ function storage_removeAllStudentData(){
 
 
 // Method to get sample test data, takes in a function as param to call after success
-function test_fetchRemoteSampleData(updateThenRenderFunc){
+function test_fetchRemoteSampleDataAsPromise(){
 
-    // shorthand implementation
-        $.get( sampleAPIURL, function( data ) {
+    getSampleRemoteData = new Promise(
+        function (resolve, reject) {
 
-            const resultData = data.results;
-            const newStudentsData = resultData.map( student => {
-                return {
-                    id: startingID++,                       // TODO: Make this guranteed unique 
-                    name: student.name.first, 
-                    grade: student.dob.age 
-                };
-            })
-            
-            updateThenRenderFunc(newStudentsData);
+            $.get( sampleAPIURL, data => {
+                const newStudentsData = data.results.map( student => {
+                    return {
+                        id: startingID++,                       // TODO: Make this guranteed unique 
+                        name: student.name.first, 
+                        grade: student.dob.age 
+                        };
+                    })
 
-        });
+                resolve(newStudentsData);
+
+            }).catch(error => {
+                reject(new Error('Some error happened here: ', error));
+            });
+        }).then(data => {
+            if (data != null) { 
+                return(data);
+            } else {
+                reject(new Error('Data from remote was null'));
+            }
+        }
+    );
+
+    return getSampleRemoteData;
     
 }
 
@@ -141,7 +154,6 @@ function model_addNewStudent(studentObj) {
 
 // CREATE: Add a collection of new students
 function model_addNewStudentCollection(studentCollection) {
-    
     students = students.concat(studentCollection);      // Add it to the actual array
 
     // Write this to local storage if enabled
