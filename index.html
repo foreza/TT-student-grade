@@ -22,8 +22,12 @@
 				<!-- Table Header -->
 				<thead>
 					<tr>
-						<th onclick="click_sortTableByName()">Name <span id="nameSortStateCaret">*</span></th>
-						<th onclick="click_sortTableByGrade()">Grade <span id="gradeSortStateCaret">*</span></th>
+						<th onclick="click_sortTableByName()">Name 
+							<span id="nameSortStateCaret">*</span>
+						</th>
+						<th onclick="click_sortTableByGrade()">Grade 
+							<span id="gradeSortStateCaret">*</span>
+						</th>
 						<th>Options</th>
 					</tr>
 				</thead>
@@ -34,10 +38,10 @@
 				<tfoot>
 					<tr>
 						<td>
-							<input id="input-name" type="text" placeholder="Name" required/>
+							<input id="input-name" type="text" placeholder="Name" required="true"/>
 						</td>
 						<td>
-							<input id="input-grade" type="number" min="0" max="100" placeholder="0" required/>
+							<input id="input-grade" type="number" min="0" max="100" placeholder="0" required="true"/>
 						</td>
 						<td>
 							<input onclick="click_attemptAddNewRow()" type="button" value="Add"/>
@@ -47,13 +51,11 @@
 			</table>
 		</main>
 		<footer></footer>
-
 		<!-- Load JS at the end of the document -->
 		<script src="js/jquery-3.4.1.js"></script>
 		<script src="js/darkMode.js"></script>
 		<script src="js/input-validation.js"></script>
 		<script src="js/sortView.js"></script>
 		<script src="js/studentGrades.js"></script>
-
 	</body>
 </html>
