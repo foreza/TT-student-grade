@@ -1,16 +1,11 @@
 var students = [];                              // Student Grades Array
-var startingID = 0;                             // Student id uniqueifier (TODO: Replace)
 var tbody;                                      // Reference to the Table Body 
 
 var uniqueIDPrefix;
 
-// Local storage (temporary)
-const studentLocalStorage = window.localStorage;
-const studentStorageKeyName = "studentGradeCollection";
-const storageEnabled = true;
-
-// Sample AJAX call (temporary)
 const baseApiURL = "http://127.0.0.1:3000/students"
+
+const connectionErrorString = "The remote may be offline. Try again later!"
 
 $(document).ready(function () {
 
@@ -76,6 +71,7 @@ function model_getAllStudentData() {
 
             }).catch(error => {
                 reject(new Error('Some error happened here: ', error));
+                alert(connectionErrorString)
             });
         }).then(data => {
             if (data != null) {
@@ -103,9 +99,12 @@ function model_addNewStudent(studentObj) {
                 resolve();
             }).catch(error => {
                 reject(new Error('Some error happened here: ', error));
+                alert(connectionErrorString);
+                return false;
             });
         }).then(() => {
             students.push(studentObj);      // Add it to the actual array
+            return true;
         }
         );
 
@@ -191,6 +190,7 @@ function view_clearViewTable() {
 
 // Update the view given a student object
 function view_updateViewWithNewStudent(studentObj) {
+    alert("updating view ")
     tbody.append(util_returnCreatedRowItemForStudent(studentObj));
 }
 
@@ -370,10 +370,12 @@ function click_attemptAddNewRow() {
             grade: formInput.grade
         }
 
-        model_addNewStudent(newStudent);
-        view_updateViewWithNewStudent(newStudent);
-        view_clearFooterInputForm();
-        view_setSortStateDirty();
+        if (model_addNewStudent(newStudent)){
+            view_updateViewWithNewStudent(newStudent);
+            view_clearFooterInputForm();
+            view_setSortStateDirty();
+        }
+       
 
     } else
         alert('Unable to add new row; check to make sure the form is filled out.');
