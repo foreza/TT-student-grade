@@ -67,7 +67,6 @@ function model_getAllStudentData() {
         }
     );
 
-        
 
     return getSampleRemoteData;
 
@@ -76,8 +75,21 @@ function model_getAllStudentData() {
 
 // CREATE: Add new student given a student object
 function model_addNewStudent(studentObj) {
-    
-    students.push(studentObj);      // Add it to the actual array
+
+    postSampleRemoteData = new Promise(
+        function (resolve, reject) {
+
+            $.post( baseApiURL, studentObj, data => {
+                resolve(data);
+            }).catch(error => {
+                reject(new Error('Some error happened here: ', error));
+            });
+        }).then(data => {
+                students.push(studentObj);      // Add it to the actual array
+        }
+    );
+
+    // students.push(studentObj);      // Add it to the actual array
 
     // Write this to local storage if enabled
     // if (storageEnabled) {
