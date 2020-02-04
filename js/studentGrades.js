@@ -10,36 +10,17 @@ const studentStorageKeyName = "studentGradeCollection";
 const storageEnabled = true;
 
 // Sample AJAX call (temporary)
-// const sampleAPIURL = "https://randomuser.me/api/?results=10"
-const sampleAPIURL = "http://127.0.0.1:3000/students"
+const baseApiURL = "http://127.0.0.1:3000/students"
 
 $(document).ready(function () {
 
+    // Init 
     initializeViewConstants();
 
-    test_fetchRemoteSampleDataAsPromise().then(data => {
-        model_addNewStudentCollection(data);            // update the model
-        view_renderStudentGradeTable(students)
-    });  
-
-
-    // Test event on-click bindings for testing local storage and API calls:
-    $("#addSampleData").bind({
-        click: function () {
-
-            test_fetchRemoteSampleDataAsPromise().then(data => {
-                model_addNewStudentCollection(data);            // update the model
-                view_renderStudentGradeTable(students);         // re-render the table
-            })
-        }
-      });
-
-      $("#removeAllData").bind({
-        click: function () {
-            model_deleteAllStudents();                      // Toggle the value
-            view_clearViewTable();
-        }
-      });
+    // Fetch data from remote and render view
+    model_getAllStudentData().then(() => {
+            view_renderStudentGradeTable(students)
+        });  
 
 });
 
@@ -48,46 +29,24 @@ $(document).ready(function () {
 function initializeViewConstants() {
 
     tbody = $("#table-grades tbody");                   // Use jQuery to select the tBody (we'll use this alot)
-    students = model_getAllStudentData();               // Add remote data to initial local view
-    // startingID = students.length;                       // TODO: Figure out a better way. Set this to the input length for now and increment this
     uniqueIDPrefix = "student-";                        // TODO: Figure out a better way. Create some prefix. 
 
 }
 
 
-// Local storage methods
+// Data Model Manipulation
 
 
-// Method to retrieve student data from storage
-function storage_retrieveStudentData() {
-
-    data = studentLocalStorage.getItem(studentStorageKeyName);
-    return data != null ? JSON.parse(data) : [];
-}
-
-
-// Method to write student data to storage
-function storage_writeStudentData() {
-    studentLocalStorage.setItem(studentStorageKeyName, JSON.stringify(students));
-}
-
-
-// Method to clean the storage
-function storage_removeAllStudentData(){
-    studentLocalStorage.removeItem(studentStorageKeyName);
-}
-
-
-// Method to get sample test data, takes in a function as param to call after success
-function test_fetchRemoteSampleDataAsPromise(){
+// GET: Get all students
+function model_getAllStudentData() {
 
     getSampleRemoteData = new Promise(
         function (resolve, reject) {
 
-            $.get( sampleAPIURL, data => {
+            $.get( baseApiURL, data => {
                 const newStudentsData = data.map( student => {
                     return {
-                        id: student.name._id,                       // TODO: Make this guranteed unique 
+                        id: student._id,                       // TODO: Make this guranteed unique 
                         name: student.name, 
                         grade: student.grade 
                         };
@@ -100,6 +59,7 @@ function test_fetchRemoteSampleDataAsPromise(){
             });
         }).then(data => {
             if (data != null) { 
+                students = data;
                 return(data);
             } else {
                 reject(new Error('Data from remote was null'));
@@ -107,40 +67,9 @@ function test_fetchRemoteSampleDataAsPromise(){
         }
     );
 
+        
+
     return getSampleRemoteData;
-    
-}
-
-
-// TEST: Use this to generate a sample data set if there's nothing in local storage
-function test_returnMockData() {
-
-    // Sample Array of student Grades
-    let localCollection = [
-        { id: 0, name: 'Do', grade: 24 },
-        { id: 1, name: 'Rey', grade: 23 },
-        { id: 2, name: 'Mee', grade: 99 },
-        { id: 3, name: 'AAA chan', grade: 88 },
-        { id: 4, name: 'aaa chen ', grade: 22 },
-        { id: 5, name: 'zzz', grade: 33 },
-        { id: 6, name: 'zed ke', grade: 44 },
-        { id: 7, name: 'zed kea', grade: 44 },
-        { id: 8, name: 'armin buu', grade: 44 }
-    ];
-
-    return localCollection;
-}
-
-
-// Data Model Manipulation
-
-
-// GET: Get all students
-function model_getAllStudentData() {
-
-    // return storage_retrieveStudentData();
-    // return test_returnMockData();
-    return [];
 
 }
 
@@ -169,7 +98,7 @@ function model_addNewStudentCollection(studentCollection) {
     //     storage_writeStudentData();
     // }
 
-    // TODO: Remove this if not needes
+    // TODO: Remove this if not needed
 
 }
 
@@ -540,6 +469,10 @@ function cancelActionWithStudentID(id) {
 // Enables editing for the specific name field
 function enableEditingNameViewForStudentID(id) {
 
+    var test = $(`#${uniqueIDPrefix}name${id} span`).text();
+    console.log(`hello from ${id} with value ${test}`);
+    
+
     // Hide the specific table cell
     $(`#${uniqueIDPrefix}name${id} span`).attr('class', 'edit-content-hidden');
 
@@ -647,12 +580,12 @@ function util_returnCreatedRowItemForStudent(student) {
     const editLink = $('<a></a>')
         .text('Edit')
         .attr('href', '#')
-        .attr('onclick', `click_editActionWithStudentID(${student.id})`);
+        .attr('onclick', `click_editActionWithStudentID('${student.id}')`);
 
     const deleteLink = $('<a></a>')
         .text('Delete')
         .attr('href', '#')
-        .attr('onclick', `click_deleteRowWithStudentID(${student.id})`);
+        .attr('onclick', `click_deleteRowWithStudentID('${student.id}')`);
 
 
     dropDownContent.append(editLink, deleteLink);
@@ -665,12 +598,12 @@ function util_returnCreatedRowItemForStudent(student) {
     const saveLink = $('<a></a>')
         .text('Save')
         .attr('href', '#')
-        .attr('onclick', `updateRowWithStudentID(${student.id})`);
+        .attr('onclick', `updateRowWithStudentID('${student.id}')`);
 
     const cancelLink = $('<a></a>')
         .text('Cancel')
         .attr('href', '#')
-        .attr('onclick', `cancelActionWithStudentID(${student.id})`);
+        .attr('onclick', `cancelActionWithStudentID('${student.id}')`);
 
 
 
