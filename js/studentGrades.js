@@ -31,6 +31,24 @@ function initializeViewConstants() {
     tbody = $("#table-grades tbody");                   // Use jQuery to select the tBody (we'll use this alot)
     uniqueIDPrefix = "student-";                        // TODO: Figure out a better way. Create some prefix. 
 
+    jQuery.each( [ "put", "delete" ], function( i, method ) {
+        jQuery[ method ] = function( url, data, callback, type ) {
+          if ( jQuery.isFunction( data ) ) {
+            type = type || callback;
+            callback = data;
+            data = undefined;
+          }
+       
+          return jQuery.ajax({
+            url: url,
+            type: method,
+            dataType: type,
+            data: data,
+            success: callback
+          });
+        };
+      });
+
 }
 
 
@@ -46,7 +64,7 @@ function model_getAllStudentData() {
             $.get( baseApiURL, data => {
                 const newStudentsData = data.map( student => {
                     return {
-                        id: student._id,                       // TODO: Make this guranteed unique 
+                        id: student._id,
                         name: student.name, 
                         grade: student.grade 
                         };
@@ -80,39 +98,17 @@ function model_addNewStudent(studentObj) {
         function (resolve, reject) {
 
             $.post( baseApiURL, studentObj, data => {
-                resolve(data);
+                resolve();
             }).catch(error => {
                 reject(new Error('Some error happened here: ', error));
             });
-        }).then(data => {
+        }).then(() => {
                 students.push(studentObj);      // Add it to the actual array
         }
     );
 
-    // students.push(studentObj);      // Add it to the actual array
-
-    // Write this to local storage if enabled
-    // if (storageEnabled) {
-    //     storage_writeStudentData();
-    // }
-
-    // TODO: Update remote
-
 }
 
-
-// CREATE: Add a collection of new students
-function model_addNewStudentCollection(studentCollection) {
-    students = students.concat(studentCollection);      // Add it to the actual array
-
-    // Write this to local storage if enabled
-    // if (storageEnabled) {
-    //     storage_writeStudentData();
-    // }
-
-    // TODO: Remove this if not needed
-
-}
 
 
 // UPDATE: Update an existing student in the local storage given the student object and id for lookup
@@ -142,16 +138,32 @@ function model_updateExistingStudent(studentObj, id) {
 // DELETE: Delete an existing student given an ID
 function model_deleteStudent(id) {
 
-    // For removing from the data structure, we'll do brute force approach for now
-    for (var i = 0; i < students.length; ++i) {
+    console.log(`model_deleteStudent ${id}`);
 
-        // Loop until we find a matching ID
-        if (id == students[i].id) {
-            students.splice(i, 1);
-            break;
+    deleteRemoteData = new Promise(
+        function (resolve, reject) {
+
+            $.delete( `${baseApiURL}/${id}`, data => {
+                resolve();
+            }).catch(error => {
+                reject(new Error('Some error happened here: ', error));
+            });
+        }).then(() => {
+            for (var i = 0; i < students.length; ++i) {
+
+                // Loop until we find a matching ID
+                if (id == students[i].id) {
+                    students.splice(i, 1);
+                    break;
+                }
+        
+            }
         }
+    );
 
-    }
+
+    // For removing from the data structure, we'll do brute force approach for now
+    
 
     // Write this to local storage if enabled
     // if (storageEnabled) {
@@ -210,7 +222,7 @@ function view_updateViewWithNewStudent(studentObj) {
 
 // Delete student from view given an id
 function view_deleteStudentFromView(id) {
-    $(`#${uniqueIDPrefix}${id}`).remove();
+    $(`#${id}`).remove();
 }
 
 
@@ -379,7 +391,6 @@ function click_attemptAddNewRow() {
     if (iv_isValidInputForFooterForm(formInput)) {
 
         let newStudent = {
-            // id: startingID++,       // TODO: How are we assigning IDs?
             name: formInput.name,
             grade: formInput.grade
         }
@@ -625,7 +636,7 @@ function util_returnCreatedRowItemForStudent(student) {
 
     colOptions.append(onHoverShow, onEditShow);
 
-    row.attr('id', `${uniqueIDPrefix}${student.id}`);   // Use a configurable prefix
+    row.attr('id', `${student.id}`);   // Use a configurable prefix
     row.append(colName, colGrade, colOptions);
 
     return row;
