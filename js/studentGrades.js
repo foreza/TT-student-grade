@@ -19,8 +19,8 @@ $(document).ready(function () {
 
     // Fetch data from remote and render view
     model_getAllStudentData().then(() => {
-            view_renderStudentGradeTable(students)
-        });  
+        view_renderStudentGradeTable(students)
+    });
 
 });
 
@@ -31,23 +31,25 @@ function initializeViewConstants() {
     tbody = $("#table-grades tbody");                   // Use jQuery to select the tBody (we'll use this alot)
     uniqueIDPrefix = "student-";                        // TODO: Figure out a better way. Create some prefix. 
 
-    jQuery.each( [ "put", "delete" ], function( i, method ) {
-        jQuery[ method ] = function( url, data, callback, type ) {
-          if ( jQuery.isFunction( data ) ) {
-            type = type || callback;
-            callback = data;
-            data = undefined;
-          }
-       
-          return jQuery.ajax({
-            url: url,
-            type: method,
-            dataType: type,
-            data: data,
-            success: callback
-          });
+    // Update our jquery to support a custom put/delete:
+    // http://stepansuvorov.com/blog/2014/04/jquery-put-and-delete/
+    jQuery.each(["put", "delete"], function (i, method) {
+        jQuery[method] = function (url, data, callback, type) {
+            if (jQuery.isFunction(data)) {
+                type = type || callback;
+                callback = data;
+                data = undefined;
+            }
+
+            return jQuery.ajax({
+                url: url,
+                type: method,
+                dataType: type,
+                data: data,
+                success: callback
+            });
         };
-      });
+    });
 
 }
 
@@ -61,14 +63,14 @@ function model_getAllStudentData() {
     getSampleRemoteData = new Promise(
         function (resolve, reject) {
 
-            $.get( baseApiURL, data => {
-                const newStudentsData = data.map( student => {
+            $.get(baseApiURL, data => {
+                const newStudentsData = data.map(student => {
                     return {
                         id: student._id,
-                        name: student.name, 
-                        grade: student.grade 
-                        };
-                    })
+                        name: student.name,
+                        grade: student.grade
+                    };
+                })
 
                 resolve(newStudentsData);
 
@@ -76,14 +78,14 @@ function model_getAllStudentData() {
                 reject(new Error('Some error happened here: ', error));
             });
         }).then(data => {
-            if (data != null) { 
+            if (data != null) {
                 students = data;
-                return(data);
+                return (data);
             } else {
                 reject(new Error('Data from remote was null'));
             }
         }
-    );
+        );
 
 
     return getSampleRemoteData;
@@ -97,15 +99,15 @@ function model_addNewStudent(studentObj) {
     postSampleRemoteData = new Promise(
         function (resolve, reject) {
 
-            $.post( baseApiURL, studentObj, data => {
+            $.post(baseApiURL, studentObj, data => {
                 resolve();
             }).catch(error => {
                 reject(new Error('Some error happened here: ', error));
             });
         }).then(() => {
-                students.push(studentObj);      // Add it to the actual array
+            students.push(studentObj);      // Add it to the actual array
         }
-    );
+        );
 
 }
 
@@ -143,7 +145,7 @@ function model_deleteStudent(id) {
     deleteRemoteData = new Promise(
         function (resolve, reject) {
 
-            $.delete( `${baseApiURL}/${id}`, data => {
+            $.delete(`${baseApiURL}/${id}`, data => {
                 resolve();
             }).catch(error => {
                 reject(new Error('Some error happened here: ', error));
@@ -156,39 +158,12 @@ function model_deleteStudent(id) {
                     students.splice(i, 1);
                     break;
                 }
-        
+
             }
         }
-    );
-
-
-    // For removing from the data structure, we'll do brute force approach for now
-    
-
-    // Write this to local storage if enabled
-    // if (storageEnabled) {
-    //     storage_writeStudentData();
-    // }
-
-    // TODO: Plugin
+        );
 
 }
-
-
-// DELETE: Set the students collection to an empty array
-function model_deleteAllStudents() {
-
-    students = [];
-
-    // Write this to local storage if enabled
-    // if (storageEnabled) {
-    //     storage_removeAllStudentData();
-    //  }
-
-    // TODO: Remove / obscure this function
-
-}
-
 
 
 
@@ -198,13 +173,13 @@ function model_deleteAllStudents() {
 // Function to render grades 
 function view_renderStudentGradeTable(studentGradeList) {
 
-    if (studentGradeList.length > 0){
+    if (studentGradeList.length > 0) {
         studentGradeList.forEach(student => {
             tbody.append(util_returnCreatedRowItemForStudent(student));
         });
     }
 
-   
+
 }
 
 
@@ -494,7 +469,7 @@ function enableEditingNameViewForStudentID(id) {
 
     var test = $(`#${uniqueIDPrefix}name${id} span`).text();
     console.log(`hello from ${id} with value ${test}`);
-    
+
 
     // Hide the specific table cell
     $(`#${uniqueIDPrefix}name${id} span`).attr('class', 'edit-content-hidden');
