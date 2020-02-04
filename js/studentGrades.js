@@ -10,12 +10,18 @@ const studentStorageKeyName = "studentGradeCollection";
 const storageEnabled = true;
 
 // Sample AJAX call (temporary)
-const sampleAPIURL = "https://randomuser.me/api/?results=10"
+// const sampleAPIURL = "https://randomuser.me/api/?results=10"
+const sampleAPIURL = "http://127.0.0.1:3000/students"
 
 $(document).ready(function () {
 
     initializeViewConstants();
-    view_renderStudentGradeTable(students);
+
+    test_fetchRemoteSampleDataAsPromise().then(data => {
+        model_addNewStudentCollection(data);            // update the model
+        view_renderStudentGradeTable(students)
+    });  
+
 
     // Test event on-click bindings for testing local storage and API calls:
     $("#addSampleData").bind({
@@ -43,7 +49,7 @@ function initializeViewConstants() {
 
     tbody = $("#table-grades tbody");                   // Use jQuery to select the tBody (we'll use this alot)
     students = model_getAllStudentData();               // Add remote data to initial local view
-    startingID = students.length;                       // TODO: Figure out a better way. Set this to the input length for now and increment this
+    // startingID = students.length;                       // TODO: Figure out a better way. Set this to the input length for now and increment this
     uniqueIDPrefix = "student-";                        // TODO: Figure out a better way. Create some prefix. 
 
 }
@@ -79,11 +85,11 @@ function test_fetchRemoteSampleDataAsPromise(){
         function (resolve, reject) {
 
             $.get( sampleAPIURL, data => {
-                const newStudentsData = data.results.map( student => {
+                const newStudentsData = data.map( student => {
                     return {
-                        id: startingID++,                       // TODO: Make this guranteed unique 
-                        name: student.name.first, 
-                        grade: student.dob.age 
+                        id: student.name._id,                       // TODO: Make this guranteed unique 
+                        name: student.name, 
+                        grade: student.grade 
                         };
                     })
 
@@ -132,9 +138,9 @@ function test_returnMockData() {
 // GET: Get all students
 function model_getAllStudentData() {
 
-    return storage_retrieveStudentData();
+    // return storage_retrieveStudentData();
     // return test_returnMockData();
-    // return [];
+    return [];
 
 }
 
@@ -145,9 +151,11 @@ function model_addNewStudent(studentObj) {
     students.push(studentObj);      // Add it to the actual array
 
     // Write this to local storage if enabled
-    if (storageEnabled) {
-        storage_writeStudentData();
-    }
+    // if (storageEnabled) {
+    //     storage_writeStudentData();
+    // }
+
+    // TODO: Update remote
 
 }
 
@@ -157,9 +165,11 @@ function model_addNewStudentCollection(studentCollection) {
     students = students.concat(studentCollection);      // Add it to the actual array
 
     // Write this to local storage if enabled
-    if (storageEnabled) {
-        storage_writeStudentData();
-    }
+    // if (storageEnabled) {
+    //     storage_writeStudentData();
+    // }
+
+    // TODO: Remove this if not needes
 
 }
 
@@ -178,10 +188,12 @@ function model_updateExistingStudent(studentObj, id) {
 
     }
 
-    // Write this to local storage if enabled
-    if (storageEnabled) {
-        storage_writeStudentData();
-    }
+    // // Write this to local storage if enabled
+    // if (storageEnabled) {
+    //     storage_writeStudentData();
+    // }
+
+    // TODO: Plugin
 
 }
 
@@ -201,9 +213,11 @@ function model_deleteStudent(id) {
     }
 
     // Write this to local storage if enabled
-    if (storageEnabled) {
-        storage_writeStudentData();
-    }
+    // if (storageEnabled) {
+    //     storage_writeStudentData();
+    // }
+
+    // TODO: Plugin
 
 }
 
@@ -214,9 +228,11 @@ function model_deleteAllStudents() {
     students = [];
 
     // Write this to local storage if enabled
-    if (storageEnabled) {
-        storage_removeAllStudentData();
-     }
+    // if (storageEnabled) {
+    //     storage_removeAllStudentData();
+    //  }
+
+    // TODO: Remove / obscure this function
 
 }
 
@@ -422,7 +438,7 @@ function click_attemptAddNewRow() {
     if (iv_isValidInputForFooterForm(formInput)) {
 
         let newStudent = {
-            id: startingID++,       // TODO: How are we assigning IDs?
+            // id: startingID++,       // TODO: How are we assigning IDs?
             name: formInput.name,
             grade: formInput.grade
         }
