@@ -96,6 +96,48 @@ function model_getAllStudentData() {
 }
 
 
+// GET: Get all students, but with a grade sort. Specify direction
+function model_getAllStudentDataSortedByType(sortType, sortDir) {
+
+    // TODO: Convert this to async/await
+    getSampleRemoteDataSortedByGrade = new Promise(
+        function (resolve, reject) {
+
+            $.get(`${baseApiURL}/?sortType=${sortType}&sortDir=${sortDir}`, data => {
+                const sortedStudentData = data.map(student => {
+                    return {
+                        id: student._id,
+                        name: student.name,
+                        grade: student.grade
+                    };
+                })
+
+                console.log("passing this:" ,sortedStudentData);
+
+                resolve(sortedStudentData);
+
+            }).catch(error => {
+                reject(new Error('Some error happened here: ', error));
+                alert(connectionErrorString)
+            });
+        }).then(data => {
+            if (data != null) {
+                students = data;
+                view_renderStudentGradeTable(students)
+                return (data);
+            } else {
+                reject(new Error('Data from remote was null'));
+            }
+        }
+        );
+
+
+    return getSampleRemoteData;
+
+}
+
+
+
 // CREATE: Add a new student given a student object and POST it to the remote
 function model_addNewStudent(studentObj) {
 
@@ -406,7 +448,7 @@ function click_sortTableByName() {
     sv_changeSortViewNameStateAndSort(students); // Pass this by reference
     view_clearViewTable();
     view_toggleNameSortStateCaret(sv_getSortNameState());
-    view_renderStudentGradeTable(students);
+    // view_renderStudentGradeTable(students);
 
 }
 
@@ -414,11 +456,7 @@ function click_sortTableByName() {
 // [ON-CLICK] Function called by index when the header for name sort is clicked
 function click_sortTableByGrade() {
 
-    sv_changeSortViewGradeStateAndSort(students);  // Pass this by reference
-    view_clearViewTable();
-    view_toggleGradeSortStateCaret(sv_getSortGradeState());
-    view_renderStudentGradeTable(students);
-
+    sv_changeSortViewGradeStateAndSort();  // Pass this by reference
 }
 
 
@@ -445,7 +483,7 @@ function updateRowWithStudentID(id) {
 
         // Update the data model (todo: do validation here)
         model_updateExistingStudent(theStudent, id).then(() => {
-            
+
             // Update the view
            view_updateViewWithModifiedStudent(theStudent, id);
 
