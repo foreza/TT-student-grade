@@ -28,7 +28,11 @@ function initializeViewConstants() {
 
     // Update our jquery to support a custom put/delete:
     // http://stepansuvorov.com/blog/2014/04/jquery-put-and-delete/
+
+    // Add a "put" and "delete" shortcut since it's already supported.
     jQuery.each(["put", "delete"], function (i, method) {
+
+
         jQuery[method] = function (url, data, callback, type) {
             if (jQuery.isFunction(data)) {
                 type = type || callback;
@@ -36,6 +40,8 @@ function initializeViewConstants() {
                 data = undefined;
             }
 
+            // GET/POST shortcuts are already supported. 
+            // We'll add 2 additional dataTypes when we call put/delete.
             return jQuery.ajax({
                 url: url,
                 type: method,
@@ -52,9 +58,10 @@ function initializeViewConstants() {
 // Data Model Manipulation
 
 
-// GET: Get all students
+// GET: Get all students from the remote.
 function model_getAllStudentData() {
 
+    // TODO: Convert this to async/await
     getSampleRemoteData = new Promise(
         function (resolve, reject) {
 
@@ -89,7 +96,7 @@ function model_getAllStudentData() {
 }
 
 
-// CREATE: Add new student given a student object
+// CREATE: Add a new student given a student object and POST it to the remote
 function model_addNewStudent(studentObj) {
 
     postSampleRemoteData = new Promise(
@@ -100,46 +107,48 @@ function model_addNewStudent(studentObj) {
             }).catch(error => {
                 reject(new Error('Some error happened here: ', error));
                 alert(connectionErrorString);
-                return false;
             });
         }).then(() => {
             students.push(studentObj);      // Add it to the actual array
-            return true;
         }
         );
+
+        return postSampleRemoteData;
 
 }
 
 
 
-// UPDATE: Update an existing student in the local storage given the student object and id for lookup
+// UPDATE: Update an existing student given the student object and id for lookup, and 
 function model_updateExistingStudent(studentObj, id) {
 
-    for (var i = 0; i < students.length; ++i) {
+    updateSampleRemoteData = new Promise(
+        function (resolve, reject) {
 
-        // Loop until we find a matching ID
-        if (id == students[i].id) {
-            students[i].name = studentObj.name;
-            students[i].grade = studentObj.grade;
-            break;
-        }
+            $.put(`${baseApiURL}/${id}`, studentObj, data => {
+                resolve();
+            }).catch(error => {
+                reject(new Error('Some error happened here: ', error));
+                alert(connectionErrorString);
+            });
+        }).then(() => {
+            for (var i = 0; i < students.length; ++i) {
 
-    }
+                // Loop until we find a matching ID
+                if (id == students[i].id) {
+                    students[i].name = studentObj.name;
+                    students[i].grade = studentObj.grade;
+                }
+             }           
+            }
+        );
 
-    // // Write this to local storage if enabled
-    // if (storageEnabled) {
-    //     storage_writeStudentData();
-    // }
-
-    // TODO: Plugin
-
+        return updateSampleRemoteData;
 }
 
 
 // DELETE: Delete an existing student given an ID
 function model_deleteStudent(id) {
-
-    console.log(`model_deleteStudent ${id}`);
 
     deleteRemoteData = new Promise(
         function (resolve, reject) {
@@ -161,6 +170,8 @@ function model_deleteStudent(id) {
             }
         }
         );
+
+        return deleteRemoteData;
 
 }
 
@@ -190,7 +201,6 @@ function view_clearViewTable() {
 
 // Update the view given a student object
 function view_updateViewWithNewStudent(studentObj) {
-    alert("updating view ")
     tbody.append(util_returnCreatedRowItemForStudent(studentObj));
 }
 
@@ -370,11 +380,11 @@ function click_attemptAddNewRow() {
             grade: formInput.grade
         }
 
-        if (model_addNewStudent(newStudent)){
+        model_addNewStudent(newStudent).then(() => {
             view_updateViewWithNewStudent(newStudent);
             view_clearFooterInputForm();
             view_setSortStateDirty();
-        }
+        });
        
 
     } else
@@ -384,8 +394,9 @@ function click_attemptAddNewRow() {
 
 // [ON-CLICK] Function called by index when the row's 'delete' is clicked
 function click_deleteRowWithStudentID(id) {
-    model_deleteStudent(id);
-    view_deleteStudentFromView(id);
+    model_deleteStudent(id).then(() => {
+        view_deleteStudentFromView(id);
+    });
 }
 
 
@@ -427,24 +438,27 @@ function updateRowWithStudentID(id) {
 
         // Get the dom
         let theStudent = {
-            id: id,    // TODO: How are we assigning IDs?
+            id: id, 
             name: $(`#${uniqueIDPrefix}input-name${id}`).val(),
             grade: parseInt($(`#${uniqueIDPrefix}input-grade${id}`).val())
         }
 
         // Update the data model (todo: do validation here)
-        model_updateExistingStudent(theStudent, id);
+        model_updateExistingStudent(theStudent, id).then(() => {
+            
+            // Update the view
+           view_updateViewWithModifiedStudent(theStudent, id);
 
-        // Update the view
-        view_updateViewWithModifiedStudent(theStudent, id);
+           // Indicate that we may resort the data.
+           view_setSortStateDirty();
 
-        // Indicate that we may resort the data.
-        view_setSortStateDirty();
+           // Handle the edit view
+           disableEditingNameViewForStudentID(id);
+           disableEditingGradeViewForStudentID(id);
+           disableEditingOptionViewForStudentID(id);
+        })
 
-        // Handle the edit view
-        disableEditingNameViewForStudentID(id);
-        disableEditingGradeViewForStudentID(id);
-        disableEditingOptionViewForStudentID(id);
+       
 
     }
 
@@ -470,8 +484,6 @@ function cancelActionWithStudentID(id) {
 function enableEditingNameViewForStudentID(id) {
 
     var test = $(`#${uniqueIDPrefix}name${id} span`).text();
-    console.log(`hello from ${id} with value ${test}`);
-
 
     // Hide the specific table cell
     $(`#${uniqueIDPrefix}name${id} span`).attr('class', 'edit-content-hidden');
