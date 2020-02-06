@@ -85,7 +85,7 @@ function sortStudentCollectionByNameAscending() {
 function sortStudentCollectionByGradeDescending() {
 
     view_clearViewTable();
-    model_getAllStudentDataSortedByType("grade", 1);
+    model_getAllStudentDataSortedByType("grade", -1);
     view_setGradeSortStateCaretDown();
 
 }
@@ -94,7 +94,7 @@ function sortStudentCollectionByGradeDescending() {
 function sortStudentCollectionByGradeAscending() {
 
     view_clearViewTable();
-    model_getAllStudentDataSortedByType("grade", -1);
+    model_getAllStudentDataSortedByType("grade", 1);
     view_setGradeSortStateCaretUp();
 
 }

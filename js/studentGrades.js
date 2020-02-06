@@ -1,5 +1,6 @@
 var students = [];                              // Student Grades Array
 var tbody;                                      // Reference to the Table Body 
+var tFooter;
 
 var uniqueIDPrefix;
 
@@ -24,6 +25,7 @@ $(document).ready(function () {
 function initializeViewConstants() {
 
     tbody = $("#table-grades tbody");                   // Use jQuery to select the tBody (we'll use this alot)
+    tFooter = $('tfoot');                               // Get a ref to the footer so we can show/hide it to smooth things out
     uniqueIDPrefix = "student-";                        // TODO: Figure out a better way. Create some prefix. 
 
     // Update our jquery to support a custom put/delete:
@@ -99,6 +101,8 @@ function model_getAllStudentData() {
 // GET: Get all students, but with a grade sort. Specify direction
 function model_getAllStudentDataSortedByType(sortType, sortDir) {
 
+    tFooter.css("visibility", "hidden");
+
     // TODO: Convert this to async/await
     getSampleRemoteDataSortedByGrade = new Promise(
         function (resolve, reject) {
@@ -112,8 +116,6 @@ function model_getAllStudentDataSortedByType(sortType, sortDir) {
                     };
                 })
 
-                console.log("passing this:" ,sortedStudentData);
-
                 resolve(sortedStudentData);
 
             }).catch(error => {
@@ -123,7 +125,9 @@ function model_getAllStudentDataSortedByType(sortType, sortDir) {
         }).then(data => {
             if (data != null) {
                 students = data;
+                
                 view_renderStudentGradeTable(students)
+                tFooter.css("visibility", "visible");
                 return (data);
             } else {
                 reject(new Error('Data from remote was null'));
@@ -145,12 +149,14 @@ function model_addNewStudent(studentObj) {
         function (resolve, reject) {
 
             $.post(baseApiURL, studentObj, data => {
-                resolve();
+                studentObj.id = data._id;
+                resolve(studentObj);
             }).catch(error => {
                 reject(new Error('Some error happened here: ', error));
                 alert(connectionErrorString);
             });
-        }).then(() => {
+        }).then((studentObj) => {
+            console.log(studentObj)
             students.push(studentObj);      // Add it to the actual array
         }
         );
@@ -225,12 +231,15 @@ function model_deleteStudent(id) {
 // Function to render grades 
 function view_renderStudentGradeTable(studentGradeList) {
 
+    var rowsToAppend = "";
+
     if (studentGradeList.length > 0) {
         studentGradeList.forEach(student => {
-            tbody.append(util_returnCreatedRowItemForStudent(student));
+            const temp = util_returnCreatedRowItemForStudent(student)
+            rowsToAppend += temp.html();
         });
     }
-
+    tbody.append($(rowsToAppend));
 
 }
 
@@ -243,7 +252,7 @@ function view_clearViewTable() {
 
 // Update the view given a student object
 function view_updateViewWithNewStudent(studentObj) {
-    tbody.append(util_returnCreatedRowItemForStudent(studentObj));
+    tbody.append(util_returnCreatedRowItemForStudent(studentObj).html());
 }
 
 
@@ -418,6 +427,7 @@ function click_attemptAddNewRow() {
     if (iv_isValidInputForFooterForm(formInput)) {
 
         let newStudent = {
+            id: "",
             name: formInput.name,
             grade: formInput.grade
         }
@@ -445,10 +455,7 @@ function click_deleteRowWithStudentID(id) {
 // [ON-CLICK] Function called by index when the header for name sort is clicked
 function click_sortTableByName() {
 
-    sv_changeSortViewNameStateAndSort(students); // Pass this by reference
-    view_clearViewTable();
-    view_toggleNameSortStateCaret(sv_getSortNameState());
-    // view_renderStudentGradeTable(students);
+    sv_changeSortViewNameStateAndSort(); // Pass this by reference
 
 }
 
@@ -520,8 +527,6 @@ function cancelActionWithStudentID(id) {
 
 // Enables editing for the specific name field
 function enableEditingNameViewForStudentID(id) {
-
-    var test = $(`#${uniqueIDPrefix}name${id} span`).text();
 
     // Hide the specific table cell
     $(`#${uniqueIDPrefix}name${id} span`).attr('class', 'edit-content-hidden');
@@ -609,6 +614,7 @@ function disableEditingOptionViewForStudentID(id) {
 // TODO: Break this up into smaller functions
 function util_returnCreatedRowItemForStudent(student) {
 
+    const outerWrapper = $('<div></div>');                    
     const row = $('<tr></tr>');
 
     const colName = $('<td></td>').attr('id', `${uniqueIDPrefix}name${student.id}`);
@@ -666,7 +672,9 @@ function util_returnCreatedRowItemForStudent(student) {
     row.attr('id', `${student.id}`);   // Use a configurable prefix
     row.append(colName, colGrade, colOptions);
 
-    return row;
+    outerWrapper.append(row);
+
+    return outerWrapper;
 
 }
 
